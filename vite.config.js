@@ -6,5 +6,5 @@ const monacoEditorPlugin = monacoEditorPluginImport.default || monacoEditorPlugi
 
 export default defineConfig({
   base: '/thiago-code-preprocessor/', 
-  plugins: [svelte(), monacoEditorPlugin({})]
+  plugins: [svelte(),monacoEditorPlugin({customDistPath : (root, buildOutDir, base) => `${buildOutDir}/monacoeditorwork`})]
 })
