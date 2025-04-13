@@ -73,7 +73,7 @@
       </div>
     </div>
     <div class="section output-section grid-right" bind:this={outputContainer}></div>
-    <div class="section grid-header flex-center logo-container"><img class="logo" src={Logo}/>Thiago's Code Preprocessor</div>
+    <div class="section grid-header flex-center logo-container"><img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor</div>
 
    
   </div>
