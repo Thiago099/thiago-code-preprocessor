@@ -1,7 +1,7 @@
 {
     "name": "Code Preprocessor",
     "short_name": "CodePreprocessor",
-    "start_url": "/",
+    "start_url": "/thiago-code-preprocessor/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
