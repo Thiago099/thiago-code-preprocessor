@@ -33,7 +33,7 @@ class Parser {
             }
         }
 
-        const regex = /@([a-zA-Z0-9_ ]+)(\(.*?\)){0,1}/gs;
+        const regex = /@([a-zA-Z0-9_]+)(\(.*?\)){0,1}/gs;
 
         function loop(main, obj) {
             if(!main) return ""
