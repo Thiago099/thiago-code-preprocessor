@@ -1,5 +1,9 @@
 import hljs from "highlight.js";
 function parseStringToObject(input) {
+    input = input.trim()
+    if(input.length == 0){
+        return {}
+    }
     const pairs = input.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g);
     const obj = {};
     for (const pair of pairs) {
