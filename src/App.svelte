@@ -1,4 +1,6 @@
 <script>
+
+   import Logo from "/icon-192.png"
   import { onMount } from "svelte";
   import { Editor } from "./lib/editor";
   import {Manager} from "./lib/manager.svelte"
@@ -71,13 +73,21 @@
       </div>
     </div>
     <div class="section output-section grid-right" bind:this={outputContainer}></div>
-    <div class="section grid-header flex-center">Thiago's code preprocessor</div>
+    <div class="section grid-header flex-center logo-container"><img class="logo" src={Logo}/>Thiago's Code Preprocessor</div>
 
    
   </div>
 </main>
 
 <style>
+  .logo-container{
+    font-weight: bold;
+    font-size: 1.5em;
+  }
+  .logo{
+    width: 25px;
+    margin-right: 10px;
+  }
   .output-section{
     overflow: auto;
     padding: 10px;
@@ -90,7 +100,7 @@
   .grid-container {
     display: grid;
     grid-template-columns: 300px 1fr 1fr; 
-    grid-template-rows: 30px 1fr;
+    grid-template-rows: 40px 1fr;
     grid-template-areas:
       "header header header"
       "panel left right";
