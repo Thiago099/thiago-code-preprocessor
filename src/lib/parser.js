@@ -3,7 +3,7 @@ function parseStringToObject(input) {
     const pairs = input.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g);
     const obj = {};
     for (const pair of pairs) {
-        const [key, value] = pair.split(/:\s*/gi);
+        const [key, value] = pair.split(/:(?=(?:[^"]*"[^"]*")*[^"]*$)/);
         if (key && value) {
             let trimValue = value.trim()
             if(trimValue.length > 2 && trimValue[0] == "\""&&trimValue.at(-1) == "\""){

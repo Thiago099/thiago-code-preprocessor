@@ -16,6 +16,15 @@ function highlight(model, matches, start, end, className){
     });
 }
 
+function split(data, exp){
+    let match;
+    const result = []
+    while ((match = exp.exec(data.substring(1, data.length - 1))) !== null) {
+        result.push(match[0])
+    }
+    return result
+}
+
 class Editor {
     constructor(element, language, value = "", readOnly = false) {
 
@@ -84,11 +93,13 @@ class Editor {
 
                     let pad = start
                     const data = match[4];
-                    let subMatch;
-                    const exp = /(?:[^,"']+|"[^"]*"|'[^']*')+/gs 
-                    while ((subMatch = exp.exec(data.substring(1, data.length - 1))) !== null) {
-                        const item = subMatch[0]
-                        const itemSplit = item.split(":")
+
+                    for(const item of split(data, /(?:[^,"']+|"[^"]*"|'[^']*')+/gs))
+                    {
+                        const itemSplit =item.split(/:(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+
+                        console.log(itemSplit)
+
                         if(itemSplit.length == 2){
                             const c = pad + itemSplit[0].length + 1
                             highlight(model, matches, pad+1, c, "var-highlight")
