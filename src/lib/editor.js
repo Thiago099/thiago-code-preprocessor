@@ -35,7 +35,7 @@ class Editor {
             readOnly: readOnly,
             automaticLayout: true
         })
-        this.editor.updateOptions({renderValidationDecorations: 'off'});
+        this.editor.updateOptions({renderValidationDecorations: 'off', showDeprecated: false});
         this.editor.onDidChangeModelContent((event) => {
             this.highlightSpecialVariables()
         });
@@ -73,33 +73,44 @@ class Editor {
         const matches = [];
         
         // Find all occurrences of @myVar
-        const regex = /@(define|output)\s+([\w ]+)|@([a-zA-Z0-9_]+)\s*(\(.*?\)){0,1}/gs;
+        const regex = /@data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|@([a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}/gs;
         let match;
         
         while ((match = regex.exec(text)) !== null) {
 
+            // if(match[1]){
+            //     highlight(model, matches, match.index, match.index+7, "instruction-highlight")
+            //     highlight(model, matches, match.index + 8, match.index + 8 + match[2].length, "variable-highlight")
+            // }
+            // else{
+            const instructions = ["define","output"]
+            let start;
             if(match[1]){
-                highlight(model, matches, match.index, match.index+7, "instruction-highlight")
-                highlight(model, matches, match.index + 8, match.index + 8 + match[2].length, "variable-highlight")
+                start = match.index + "data".length+1
+                highlight(model, matches, match.index, start,  "instruction-highlight")
+                highlight(model, matches, start, start + match[1].length,  "variable-highlight")
+                start += match[1].length
             }
             else{
-                const start = match.index + match[3].length+1
-                highlight(model, matches, match.index, start, "variable-highlight")
+                start = match.index + match[3].length+1 
+                highlight(model, matches, match.index, start, instructions.includes(match[3].trim().toLocaleLowerCase())? "instruction-highlight" :"variable-highlight")
+            }
+            const name = match[1]?"data":match[3].trim().toLocaleLowerCase();
+            if(match[2] || match[4]){
 
-                if(match[4]){
-                    const end = start + match[4].length
-                    highlight(model, matches, start, start+1, "parenthesis-highlight")
-                    highlight(model, matches, end-1, end, "parenthesis-highlight")
+                const data = match[2] || match[4];
+                const end = start + data.length
+                
+                highlight(model, matches, start, start+1, "parenthesis-highlight")
+                highlight(model, matches, end-1, end, "parenthesis-highlight")
 
+                if(!["define","output"].includes(name)){
                     let pad = start
-                    const data = match[4];
 
                     for(const item of split(data, /(?:[^,"']+|"[^"]*"|'[^']*')+/gs))
                     {
                         const itemSplit =item.split(/:(?=(?:[^"]*"[^"]*")*[^"]*$)/)
-
-                        console.log(itemSplit)
-
+    
                         if(itemSplit.length == 2){
                             const c = pad + itemSplit[0].length + 1
                             highlight(model, matches, pad+1, c, "var-highlight")
@@ -109,12 +120,12 @@ class Editor {
                         else{
                             highlight(model, matches, pad+1, pad+item.length+1, "var-highlight")
                         }
-
+    
                         pad += item.length + 1
                     }
                 }
-            }
 
+            }
         }
         
         if (this.decorationsCollection) {

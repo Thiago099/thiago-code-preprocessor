@@ -26,7 +26,10 @@ html, body {
 .value-highlight {
   color: #ce9178 !important;
 }
+.error-highlight{
+  color: red !important;
 
+}
 hr {
   margin-top: 1rem;
   margin-bottom: 1rem;

@@ -1,19 +1,32 @@
 import hljs from "highlight.js";
-function parseStringToObject(input) {
+function parseStringToObject(input, data) {
     input = input.trim()
     if(input.length == 0){
         return {}
     }
     const pairs = input.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g);
-    const obj = {};
+    let obj = {};
     for (const pair of pairs) {
+        if(pair.trim().startsWith("@")){
+            const name = pair.trim().slice(1)
+            if(name in data){
+                obj = {...obj, ...data[name]}
+            }
+        }
+    }
+    for (const pair of pairs) {
+        if(pair.startsWith("@")){
+            continue;
+        }
         const [key, value] = pair.split(/:(?=(?:[^"]*"[^"]*")*[^"]*$)/);
         if (key && value) {
             let trimValue = value.trim()
             if(trimValue.length > 2 && trimValue[0] == "\""&&trimValue.at(-1) == "\""){
                 trimValue = trimValue.substring(1, trimValue.length - 1)
             }
-            obj[key.trim()] = trimValue;
+            if(trimValue){
+                obj[key.trim()] = trimValue;
+            }
         }
     }
     return obj;
@@ -23,18 +36,24 @@ class Parser {
     static Parse(input, language) {
         const context = {};
 
-        const exp = /@(define|output)\s+([\w ]+)(.*?)(?=@define|@output|$)/gs;
+        const exp = /@(define|output|data)\s+([\w ]+)(.*?)(?=@define|@output|@data|$)/gs;
 
         let match;
 
         const output = {}
+        const data = {}
 
         while ((match = exp.exec(input))) {
             if(match[1] == "define"){
-                context[match[2]] = match[3].trim();
+                context[match[2].trim()] = match[3].trim();
             } else if(match[1] == "output"){
-                output[match[2]] = match[3].trim();
+                output[match[2].trim()] = match[3].trim();
+            } else if(match[1] == "data"){
+                let props = match[3].trim()
+                props = props.substring(1, props.length - 1)
+                data[match[2].trim()] = parseStringToObject(props, {})
             }
+
         }
 
         const regex = /@([a-zA-Z0-9_]+)(\(.*?\)){0,1}/gs;
@@ -47,9 +66,15 @@ class Parser {
 
                 let result = ""
 
-                if (props && varName in context) {
-                    const parameters = { ...obj, ...parseStringToObject(props.substring(1, props.length - 1)) }
-                    result = loop(context[varName], parameters)
+                if (props) {
+                    props = props.trim();
+                    props = props.substring(1, props.length - 1)
+                    const localData = parseStringToObject(props, data)
+
+                    if(varName in context){
+                        const parameters = { ...obj, ...localData }
+                        result = loop(context[varName], parameters)
+                    }
                 }
                 else {
                     result = obj[varName] || match;
