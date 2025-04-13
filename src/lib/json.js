@@ -12,10 +12,12 @@ class Json{
             const reader = new FileReader();
             reader.onload = () => {
               try {
-                const json = JSON.parse(reader.result);
-                resolve(json);
-              } catch (e) {
-                reject(e);
+                  const json = JSON.parse(reader.result);
+                  resolve(json);
+              } 
+              catch
+              {
+                resolve(null)
               }
             };
             reader.onerror = () => reject(reader.error);
@@ -26,7 +28,7 @@ class Json{
         });
       }
 
-      static save(json, filename = 'data.json') {
+    static save(json, filename = 'data.json') {
         const jsonString = JSON.stringify(json, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);

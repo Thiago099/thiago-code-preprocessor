@@ -19,7 +19,9 @@ class Manager{
                 this.languageNameMap[language.id] = language.id
             }
         }
-        
+        this.RefreshItems()
+    }
+    RefreshItems(){
         this.items = Object.entries(localStorage).map(([key, value])=>{return{name: key,language:this.languageNameMap[JSON.parse(value).language]}})
 
         this.selectedItem = this.items[0]?.name
@@ -56,7 +58,7 @@ class Manager{
             return;
         }
 
-        const value = JSON.parse(localStorage.getItem(key)) ?? {code:"", language:"javascript"}
+        const value = JSON.parse(localStorage.getItem(key))
 
         this.load(key, value)
     }
@@ -75,9 +77,11 @@ class Manager{
         this.save(this.selectedItem, this.inputEditor.value)
     }
     deleteSelected(){
-        localStorage.removeItem(this.selectedItem);
-        this.items = this.items.filter(item => item.name !== this.selectedItem);
-        this.localStorageLoad(this.items.at(-1)?.name)
+        if(confirm(`Are you sure you want to delete ${this.selectedItem}`)) {
+            localStorage.removeItem(this.selectedItem);
+            this.items = this.items.filter(item => item.name !== this.selectedItem);
+            this.localStorageLoad(this.items.at(-1)?.name)
+        }
     }
     selectItem(value){
         this.localStorageLoad(value)
@@ -117,10 +121,19 @@ class Manager{
     Import(){
         Json.load()
         .then(json=>{
-          localStorage.clear()
-          for(const [key, value] of Object.entries(json)){
-            localStorage.setItem(key, value)
-          }
+            try {
+                localStorage.clear()
+                for(const [key, value] of Object.entries(json)){
+                    localStorage.setItem(key, JSON.stringify(value))
+                }
+                this.RefreshItems()
+                if(this.selectedItem == null || this.selectedItem == "") {
+                    this.localStorageLoad(this.selectedItem)
+                }
+            }
+            catch {
+                
+            }
         })
     }
     Save(){
@@ -133,9 +146,19 @@ class Manager{
     Load(){
         Json.load()
         .then(json=>{
-            this.load(json.name, json)
-            this.CommitCurrent()
+            try{
+                this.load(json.name, json)
+                this.CommitCurrent()
+            }
+            catch{
+            }
         })
+    }
+    Clear(){
+        if(confirm(`Are you sure you want to delete all items`)) {
+            localStorage.clear()
+            this.RefreshItems()
+        }
     }
     get IsAnyItemSelected(){
         return this.selectedItem != null && this.selectedItem != ""

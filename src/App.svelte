@@ -33,7 +33,7 @@
         <input type="text" bind:value={manager.filter} class="form-control" id="queryInput">
         <label for="queryInput"><i class="fa-solid fa-magnifying-glass"></i> Filter</label>
       </div>
-      <select class="form-select form-select-lg mb-3" size="11" value={manager.selectedItem} oninput={e=>manager.selectItem(e.target.value)} >
+      <select class="form-select form-select-lg mb-3" size="10" value={manager.selectedItem} oninput={e=>manager.selectItem(e.target.value)} >
         {#each manager.items.filter(x=>x.name.toLowerCase().includes(manager.filter.toLowerCase())) as item}
           <option value={item.name}>{item.name} ({item.language})</option>
         {/each}
@@ -43,14 +43,14 @@
         <button class="form-control" onclick={e=>manager.AddItem()}><i class="fa-solid fa-plus"></i> Add</button>
       </div>
       <div class="button-container">
-        <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Save</button>
-        <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-rotate"></i> Load</button>
+        <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button>
+        <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button>
       </div>
       <h4 style="margin-top: 30px;">Properties</h4>
       <hr/>
       <div class="form-floating">
         <input type="text" class="form-control" id="floatingInput" value={manager.selectedItem} oninput={e=>manager.RenameItem(e.target.value)} >
-        <label for="floatingInput"><i class="fa-solid fa-comments"></i> Name</label>
+        <label for="floatingInput"><i class="fa-solid fa-file"></i> Name</label>
       </div>
       <div class="form-floating">
         <select
@@ -68,9 +68,12 @@
       <h4 style="margin-top: 30px;">Export</h4>
       <hr/>
       <div class="button-container">
-      <button class="form-control" onclick={e=>manager.Export()}><i class="fa-solid fa-download"></i> Export All</button>
+      <button class="form-control" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export All</button>
       <button class="form-control" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import All</button>
       </div>
+      <div class="button-container">
+      <button class="form-control" onclick={e=>manager.Clear()}><i class="fa-solid fa-download"></i> Clear</button>
+    </div>
     </div>
     <div class="section output-section grid-right" bind:this={outputContainer}></div>
     <div class="section grid-header flex-center logo-container"><img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor</div>
