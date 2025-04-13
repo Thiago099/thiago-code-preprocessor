@@ -23,7 +23,7 @@
 
 <main>
   <div class="grid-container" bind:this={gridContainer}>
-    <div class="section grid-left" bind:this={editorContainer}></div>
+    <div class="section grid-left {manager.IsAnyItemSelected ? "" : "disabled" }" bind:this={editorContainer}></div>
     <div class="section grid-panel">
       <h4 style="margin-top: 30px;">File</h4>
       <hr/>

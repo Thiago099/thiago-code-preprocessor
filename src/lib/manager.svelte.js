@@ -50,6 +50,11 @@ class Manager{
         }));
     }
     load(key){
+        if(key == null || key == ""){
+            this.selectedItem = null        
+            this.outputEditor.innerHTML = "";
+            return;
+        }
         const value = JSON.parse(localStorage.getItem(key)) ?? {code:"", language:"javascript"}
         value.code = atob(value.code)
         this.selectedLanguage = value.language
@@ -59,7 +64,6 @@ class Manager{
     }
     changeLanguage(value) {
         this.inputEditor.language = value;
-        this.outputEditor.innerHTML = value;
         this.selectedLanguage = value
         this.RenameItem(this.selectedItem)
         this.save(this.selectedItem, this.inputEditor.value)
@@ -67,7 +71,7 @@ class Manager{
     deleteSelected(){
         localStorage.removeItem(this.selectedItem);
         this.items = this.items.filter(item => item.name !== this.selectedItem);
-        this.selectedItem = this.items.at(-1).name
+        this.load(this.items.at(-1)?.name)
     }
     selectItem(value){
         this.selectedItem = value
@@ -82,7 +86,7 @@ class Manager{
         this.items.push({name: this.selectedItem, language: this.languageNameMap[this.selectedLanguage]})
         this.items.sort((a,b)=>a.name.localeCompare(b.name))
         this.items = this.items
-        this.inputEditor.value = "@define main"
+        this.inputEditor.value = "@output Main\n\n"
         this.save(this.selectedItem, this.inputEditor.value)
         this.selectItem(this.selectedItem)
     }
@@ -108,6 +112,9 @@ class Manager{
             localStorage.setItem(key, value)
           }
         })
+    }
+    get IsAnyItemSelected(){
+        return this.selectedItem != null && this.selectedItem != ""
     }
 }
 

@@ -44,3 +44,8 @@ hr {
   border-radius: 5px;
   border: 1px solid rgb(129, 129, 129);
 }
+
+.disabled{
+  opacity: 0.5;
+  pointer-events: none;
+}
