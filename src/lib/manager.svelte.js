@@ -34,7 +34,7 @@ class Manager{
         this.inputEditor = new Editor(inputEditor, this.selectedLanguage);
         this.outputEditor = outputEditor
 
-        this.load(this.selectedItem)
+        this.localStorageLoad(this.selectedItem)
 
         this.inputEditor.addEventListener((value) => {
             this.outputEditor.innerHTML = Parser.Parse(value, this.selectedLanguage);
@@ -49,13 +49,19 @@ class Manager{
           language: this.selectedLanguage
         }));
     }
-    load(key){
+    localStorageLoad(key){
         if(key == null || key == ""){
             this.selectedItem = null        
             this.outputEditor.innerHTML = "";
             return;
         }
+
         const value = JSON.parse(localStorage.getItem(key)) ?? {code:"", language:"javascript"}
+
+        this.load(key, value)
+    }
+    load(key, value){
+        this.selectedItem = key
         value.code = atob(value.code)
         this.selectedLanguage = value.language
         this.inputEditor.language =  value.language;
@@ -71,11 +77,10 @@ class Manager{
     deleteSelected(){
         localStorage.removeItem(this.selectedItem);
         this.items = this.items.filter(item => item.name !== this.selectedItem);
-        this.load(this.items.at(-1)?.name)
+        this.localStorageLoad(this.items.at(-1)?.name)
     }
     selectItem(value){
-        this.selectedItem = value
-        this.load(value)
+        this.localStorageLoad(value)
     }
     AddItem(){
         let i = 0
@@ -83,12 +88,17 @@ class Manager{
         while(this.items.some(x=>x.name == this.selectedItem)){
             this.selectedItem = "new " + ++i
         }
-        this.items.push({name: this.selectedItem, language: this.languageNameMap[this.selectedLanguage]})
-        this.items.sort((a,b)=>a.name.localeCompare(b.name))
-        this.items = this.items
+        this.CommitCurrent()
         this.inputEditor.value = "@output Main\n\n"
         this.save(this.selectedItem, this.inputEditor.value)
         this.selectItem(this.selectedItem)
+    }
+    CommitCurrent(){
+        if(!this.items.some(x=>x.name == this.selectedItem)){
+            this.items.push({name: this.selectedItem, language: this.languageNameMap[this.selectedLanguage]})
+            this.items.sort((a,b)=>a.name.localeCompare(b.name))
+            this.items = this.items
+        }
     }
     RenameItem(value){
         localStorage.removeItem(this.selectedItem)
@@ -102,7 +112,7 @@ class Manager{
         for(const [key, value] of Object.entries(localStorage)){
           obj[key] = JSON.parse(value)
         }
-        Json.save(obj, "output.json")
+        Json.save(obj, "all.tcpg.json")
     }
     Import(){
         Json.load()
@@ -111,6 +121,20 @@ class Manager{
           for(const [key, value] of Object.entries(json)){
             localStorage.setItem(key, value)
           }
+        })
+    }
+    Save(){
+        Json.save({
+            name: this.selectedItem,
+            code: btoa(this.inputEditor.value),
+            language: this.selectedLanguage
+        }, this.selectedItem + ".tcp.json")
+    }
+    Load(){
+        Json.load()
+        .then(json=>{
+            this.load(json.name, json)
+            this.CommitCurrent()
         })
     }
     get IsAnyItemSelected(){

@@ -31,7 +31,7 @@
         <input type="text" bind:value={manager.filter} class="form-control" id="queryInput">
         <label for="queryInput"><i class="fa-solid fa-magnifying-glass"></i> Filter</label>
       </div>
-      <select class="form-select form-select-lg mb-3" size="12" value={manager.selectedItem} oninput={e=>manager.selectItem(e.target.value)} >
+      <select class="form-select form-select-lg mb-3" size="11" value={manager.selectedItem} oninput={e=>manager.selectItem(e.target.value)} >
         {#each manager.items.filter(x=>x.name.toLowerCase().includes(manager.filter.toLowerCase())) as item}
           <option value={item.name}>{item.name} ({item.language})</option>
         {/each}
@@ -39,6 +39,10 @@
       <div class="button-container">
         <button class="form-control" onclick={e=>manager.deleteSelected()}><i class="fa-solid fa-trash-can"></i> Delete</button>
         <button class="form-control" onclick={e=>manager.AddItem()}><i class="fa-solid fa-plus"></i> Add</button>
+      </div>
+      <div class="button-container">
+        <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Save</button>
+        <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-rotate"></i> Load</button>
       </div>
       <h4 style="margin-top: 30px;">Properties</h4>
       <hr/>
@@ -62,8 +66,8 @@
       <h4 style="margin-top: 30px;">Export</h4>
       <hr/>
       <div class="button-container">
-      <button class="form-control" onclick={e=>manager.Export()}><i class="fa-solid fa-download"></i> Export</button>
-      <button class="form-control" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import</button>
+      <button class="form-control" onclick={e=>manager.Export()}><i class="fa-solid fa-download"></i> Export All</button>
+      <button class="form-control" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import All</button>
       </div>
     </div>
     <div class="section output-section grid-right" bind:this={outputContainer}></div>
