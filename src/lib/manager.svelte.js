@@ -127,9 +127,7 @@ class Manager{
                     localStorage.setItem(key, JSON.stringify(value))
                 }
                 this.RefreshItems()
-                if(this.selectedItem == null || this.selectedItem == "") {
-                    this.localStorageLoad(this.selectedItem)
-                }
+                this.localStorageLoad(this.selectedItem)
             }
             catch {
                 
@@ -149,6 +147,8 @@ class Manager{
             try{
                 this.load(json.name, json)
                 this.CommitCurrent()
+                this.selectedItem = json.name
+                this.localStorageLoad(this.selectedItem)
             }
             catch{
             }
