@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: rgb(129, 129, 129) !important;
+}
+
+.variable-highlight {
+  color: #dcdcaa !important;
+}
+.instruction-highlight {
+  color: #4ec9b0 !important;
+}
+.parenthesis-highlight {
+  color: #d4d4d4 !important;
+}
+.var-highlight {
+  color: #c586c0 !important;
+}
+.value-highlight {
+  color: #ce9178 !important;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.output-copy-button{
+  display: inline !important;
+  width: 150px !important;
+  margin-left: 15px;
+}
+
+.code-block{
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgb(129, 129, 129);
+}
