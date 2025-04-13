@@ -1,6 +1,6 @@
 # Thiago's code preprocessor
 
-This is a simple program made to crete code snipets that 
+This is a simple program made to create code snipets
 
 You can access this system in:
 
