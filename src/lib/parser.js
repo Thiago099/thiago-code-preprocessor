@@ -8,7 +8,7 @@ function parseStringToObject(input, data) {
     let obj = {};
     for (const pair of pairs) {
         if(pair.trim().startsWith("@")){
-            const name = pair.trim().slice(1)
+            const name = pair.trim().slice(1).toLocaleLowerCase()
             if(name in data){
                 obj = {...obj, ...data[name]}
             }
@@ -25,7 +25,7 @@ function parseStringToObject(input, data) {
                 trimValue = trimValue.substring(1, trimValue.length - 1)
             }
             if(trimValue){
-                obj[key.trim()] = trimValue;
+                obj[key.trim().toLocaleLowerCase()] = trimValue;
             }
         }
     }
@@ -45,13 +45,13 @@ class Parser {
 
         while ((match = exp.exec(input))) {
             if(match[1] == "define"){
-                context[match[2].trim()] = match[3].trim();
+                context[match[2].trim().toLocaleLowerCase()] = match[3].trim();
             } else if(match[1] == "output"){
                 output[match[2].trim()] = match[3].trim();
             } else if(match[1] == "data"){
                 let props = match[3].trim()
                 props = props.substring(1, props.length - 1)
-                data[match[2].trim()] = parseStringToObject(props, {})
+                data[match[2].trim().toLocaleLowerCase()] = parseStringToObject(props, {})
             }
 
         }
@@ -62,7 +62,7 @@ class Parser {
             if(!main) return ""
             return main.replace(regex, (match, varName, props) => {
 
-                varName = varName.trim()
+                varName = varName.trim().toLocaleLowerCase()
 
                 let result = ""
 
