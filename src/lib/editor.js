@@ -89,7 +89,7 @@ class Editor {
             if(match[1]){
                 start = match.index + "data".length+1
                 highlight(model, matches, match.index, start,  "instruction-highlight")
-                highlight(model, matches, start, start + match[1].length,  "variable-highlight")
+                highlight(model, matches, start, start + match[1].length,  "data-highlight")
                 start += match[1].length
             }
             else{
@@ -114,12 +114,13 @@ class Editor {
     
                         if(itemSplit.length == 2){
                             const c = pad + itemSplit[0].length + 1
-                            highlight(model, matches, pad+1, c, "var-highlight")
+                            highlight(model, matches, pad+1, c, "property-highlight")
                             highlight(model, matches, c, c+1, "parenthesis-highlight")
                             highlight(model, matches, c+1, pad+item.length+1, "value-highlight")
                         }
                         else{
-                            highlight(model, matches, pad+1, pad+item.length+1, "var-highlight")
+                            const isVariable = item.trim().startsWith("@")
+                            highlight(model, matches, pad+1, pad+item.length+1, isVariable ? "data-highlight" : "property-highlight")
                         }
     
                         pad += item.length + 1
