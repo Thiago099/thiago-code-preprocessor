@@ -2,7 +2,10 @@
 
 This is a simple program made to create code snipets
 
-You can access this system in:
+![image](https://github.com/user-attachments/assets/82e17eb0-a980-4db9-8c77-25caa2b6bd05)
+
+
+You can use it now via github pages:
 
 https://thiago099.github.io/thiago-code-preprocessor
 
@@ -32,7 +35,7 @@ You can call your function anywhere by using
 ```
 
 # Data
-You can use data to declare an object that can be used by other function
+You can use data to declare an object that can be used by other functions
 ```
 @data myData(
     parameter3: value3,
