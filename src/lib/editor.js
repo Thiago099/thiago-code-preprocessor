@@ -33,7 +33,8 @@ class Editor {
             language: language,
             theme: 'vs-dark',
             readOnly: readOnly,
-            automaticLayout: true
+            automaticLayout: true,
+            showUnused:false
         })
         this.editor.updateOptions({renderValidationDecorations: 'off', showDeprecated: false});
         this.editor.onDidChangeModelContent((event) => {
