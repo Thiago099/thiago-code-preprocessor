@@ -74,7 +74,7 @@ class Editor {
         const matches = [];
         
         // Find all occurrences of @myVar
-        const regex = /@data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|@([a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}/gs;
+        const regex = /@data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|(@define)(\s*\w+)|(@output)(\s*[^\n]+)|@([a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}/gs;
         let match;
         
         while ((match = regex.exec(text)) !== null) {
@@ -84,47 +84,51 @@ class Editor {
             //     highlight(model, matches, match.index + 8, match.index + 8 + match[2].length, "variable-highlight")
             // }
             // else{
-            const instructions = ["define","output"]
             let start;
             if(match[1]){
                 start = match.index + "data".length+1
                 highlight(model, matches, match.index, start,  "instruction-highlight")
                 highlight(model, matches, start, start + match[1].length,  "data-highlight")
                 start += match[1].length
+            } else if(match[3] || match[5]){
+                const name = match[3] ?? match[5]
+                const prop = match[4] ?? match[6]
+                console.log(prop)
+                start = match.index + name.length
+                highlight(model, matches, match.index, start, "instruction-highlight")
+                highlight(model, matches, start, start + prop.length, "variable-highlight")
             }
-            else{
-                start = match.index + match[3].length+1 
-                highlight(model, matches, match.index, start, instructions.includes(match[3].trim().toLocaleLowerCase())? "instruction-highlight" :"variable-highlight")
+            else if(match[7]){
+                start = match.index + match[7].length+1 
+                 highlight(model, matches, match.index, start, "variable-highlight")
             }
-            const name = match[1]?"data":match[3].trim().toLocaleLowerCase();
-            if(match[2] || match[4]){
+            if(match[2] || match[8]){
+                const name = match[1] ? "data" : match[7]?.trim()?.toLocaleLowerCase();
 
-                const data = match[2] || match[4];
+                const data = match[2] || match[8];
                 const end = start + data.length
                 
                 highlight(model, matches, start, start+1, "parenthesis-highlight")
                 highlight(model, matches, end-1, end, "parenthesis-highlight")
 
-                if(!["define","output"].includes(name)){
-                    let pad = start
+                let pad = start
 
-                    for(const item of split(data, /(?:[^,"']+|"[^"]*"|'[^']*')+/gs))
-                    {
-                        const itemSplit =item.split(/:(?=(?:[^"]*"[^"]*")*[^"]*$)/)
-    
-                        if(itemSplit.length == 2){
-                            const c = pad + itemSplit[0].length + 1
-                            highlight(model, matches, pad+1, c, "property-highlight")
-                            highlight(model, matches, c, c+1, "parenthesis-highlight")
-                            highlight(model, matches, c+1, pad+item.length+1, "value-highlight")
-                        }
-                        else{
-                            const isVariable = item.trim().startsWith("@")
-                            highlight(model, matches, pad+1, pad+item.length+1, isVariable ? "data-highlight" : "property-highlight")
-                        }
-    
-                        pad += item.length + 1
+                for(const item of split(data, /(?:[^,"']+|"[^"]*"|'[^']*')+/gs))
+                {
+                    const itemSplit =item.split(/:(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+
+                    if(itemSplit.length == 2){
+                        const c = pad + itemSplit[0].length + 1
+                        highlight(model, matches, pad+1, c, "property-highlight")
+                        highlight(model, matches, c, c+1, "parenthesis-highlight")
+                        highlight(model, matches, c+1, pad+item.length+1, "value-highlight")
                     }
+                    else{
+                        const isVariable = item.trim().startsWith("@")
+                        highlight(model, matches, pad+1, pad+item.length+1, isVariable ? "data-highlight" : "property-highlight")
+                    }
+
+                    pad += item.length + 1
                 }
 
             }
