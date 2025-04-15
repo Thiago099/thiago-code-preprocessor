@@ -75,6 +75,7 @@
           bind:value={manager.categoryFilter}
         >
           <option value="----all">All</option>
+          <option value="----none">No Category</option>
           {#each manager.categories as category}
             <option value={category}>{category}</option>
           {/each}
@@ -90,8 +91,12 @@
         <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button>
       </div>
       <select class="form-select form-select-lg mb-3" size="20" value={manager.selectedItem?.id} oninput={e=>manager.Select(e.target.value)} >
-        {#each manager.items.filter(x=>manager.DoPassFilter(x)) as item}
-          <option value={item.id}>{item.name} ({Editor.GetLanguageName(item.language)})</option>
+        {#each Object.entries(manager.GetListObjects()) as [key, value]}
+        <optgroup label={key}>
+          {#each value as item}
+          <option style="padding-left: 30px;" value={item.id}>{item.name} ({Editor.GetLanguageName(item.language)})</option>
+          {/each}
+        </optgroup>
         {/each}
       </select>
 

@@ -14,7 +14,11 @@ class Item{
     }
     constructor(source = null) {
         if(source != null){
-            Object.assign(this, source)
+            this.id = source.id
+            this.name = source.name
+            this.language = source.language
+            this.code = atob(source.code)
+            this.category = source.category
         }
     }
     static IsValidKey(text){
@@ -39,6 +43,22 @@ class Manager{
 
     constructor() {
         this.LocalStorageLoadAll()
+    }
+
+    GetListObjects(){
+        const obj = {}
+          
+        this.SortItems()
+
+        for(const item of this.items.filter(x => this.DoPassFilter(x))){
+            const key = item.category == ""?"No Category":item.category
+            if(!(key in obj)){
+                obj[key] = []
+            }
+            obj[key].push(item)
+        }
+
+        return obj
     }
 
     Init(inputEditor, outputEditor){
@@ -107,10 +127,7 @@ class Manager{
         Json.load()
         .then(items=>{
             this.Clear()
-            this.items = items.map(x=>{
-                x.code = atob(x.code)
-                return new Item(x)
-            })
+            this.items = items.map(x => new Item(x))
 
             for(const item of this.items){
                 this.LocalStorageSave(item)
@@ -134,7 +151,8 @@ class Manager{
     }
 
     DoPassFilter(item){
-        return item.name.toLowerCase().includes(this.filter.toLowerCase()) && (this.categoryFilter == "----all" || item.category == this.categoryFilter)
+        return item.name.toLowerCase().includes(this.filter.toLowerCase()) && 
+        ((this.categoryFilter == "----all" || item.category == this.categoryFilter)|| (this.categoryFilter == "----none"&& item.category == "") )
     }
 
     LocalStorageSaveSelected(){
@@ -148,7 +166,6 @@ class Manager{
         for(const key of Object.keys(localStorage)){
             if(Item.IsValidKey(key)){
                 const value = JSON.parse(localStorage.getItem(key))
-                value.code = atob(value.code)
                 this.items.push(new Item(value))
             }
         }
@@ -177,6 +194,35 @@ class Manager{
         if(confirm(`Are you sure you want to clean all of the texts`)){
             this.Clear()
         } 
+    }
+
+    SortItems(){
+        this.items.sort((a, b) => {
+
+            const getWeight = (char) => {
+                if (!char) return Infinity; // undefined/null
+                if (char === '') return 1e14; // empty string
+                if (char === '♾️') return 1e15; // infinity symbol example
+                return 0; // normal characters
+            };
+
+            const weightA = getWeight(a.category);
+            const weightB = getWeight(b.category);
+
+            let weight = 0
+            if (weightA || weightB) {
+                weight = weightA - weightB
+            }
+            else{
+                weight = a.category.localeCompare(b.category)
+            }
+  
+            if (weight !== 0) {
+              return weight;
+            }
+            
+            return a.name.localeCompare(b.name);
+        });
     }
 }
 
