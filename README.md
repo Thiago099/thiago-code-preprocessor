@@ -16,6 +16,7 @@ Even trough macros are not a good programming practice, they are sometimes usefu
 language to generate code using macros
 
 # Commands
+All the commands are hoisted (which means the order you define them does not matter).
 
 ## Output
 With that instruction the code until the next instruction will be a output snippet
