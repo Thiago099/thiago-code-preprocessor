@@ -83,7 +83,7 @@
       </div>
       <div class="button-container">
         <button class="form-control" onclick={e=>manager.Add()}><i class="fa-solid fa-plus"></i> Add</button>
-        <button class="form-control" onclick={e=>manager.Delete()}><i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button class="form-control" onclick={e=>manager.ConfirmDelete()}><i class="fa-solid fa-trash-can"></i> Delete</button>
       </div>
       <div class="button-container">
         <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button>
@@ -110,7 +110,7 @@
           <li><button class="dropdown-item" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export all</button></li>
           <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import all</button></li>
           <div class="dropdown-divider"></div>
-          <li><button class="dropdown-item" onclick={e=>manager.Clear()}><i class="fa-solid fa-download"></i> Clear</button></li>
+          <li><button class="dropdown-item" onclick={e=>manager.ConfirmClean()}><i class="fa-solid fa-download"></i> Clear</button></li>
         </ul>
       </div>
       <div style="margin-right: 10px;"></div>

@@ -167,6 +167,17 @@ class Manager{
         }
         return Array.from(result)
     }
+
+    ConfirmDelete(){
+        if(confirm(`Are you sure you want to delete ${this.selectedItem.name}?`)){
+            this.Delete()
+        }
+    }
+    ConfirmClean(){
+        if(confirm(`Are you sure you want to clean all of the texts`)){
+            this.Clear()
+        } 
+    }
 }
 
 export { Manager }
