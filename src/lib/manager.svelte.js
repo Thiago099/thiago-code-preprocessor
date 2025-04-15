@@ -1,170 +1,171 @@
 import { Editor } from "./editor";
 import { Parser } from "./parser";
 import { Json } from "./json";
-
-
+import { UUID } from "./uuid";
+class Item{
+    id = UUID.Create()
+    name = $state("")
+    language = $state("javascript")
+    code = $state("")
+    category = $state("")
+    static matchKeyRegex = /tcp-item-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
+    get key() {
+        return "tcp-item-" + this.id
+    }
+    constructor(source = null) {
+        if(source != null){
+            Object.assign(this, source)
+        }
+    }
+    static IsValidKey(text){
+        return Item.matchKeyRegex.test(text)
+    }
+    ToRaw(){
+        return {
+            id:this.id,
+            name: this.name,
+            language: this.language,
+            code: btoa(this.code),
+            category: this.category
+        }
+    }
+}
 class Manager{
     items = $state([])
-    selectedLanguage = $state("javascript")
     filter = $state("")
-    selectedItem = $state("")
+    categoryFilter = $state("----all")
+    selectedItem = $state(null)
+    
+
     constructor() {
-        this.languageNameMap = {}
-
-        for(const language of Editor.languages){
-            if(language.aliases){
-                this.languageNameMap[language.id] = language.aliases[0]
-            }
-            else{
-                this.languageNameMap[language.id] = language.id
-            }
-        }
-        this.RefreshItems()
+        this.LocalStorageLoadAll()
     }
-    RefreshItems(){
-        this.items = Object.entries(localStorage).map(([key, value])=>{return{name: key,language:this.languageNameMap[JSON.parse(value).language]}})
 
-        this.selectedItem = this.items[0]?.name
-
-        this.SortItems()
-    }
-    SortItems(){
-        this.items.sort((a, b) => {
-            const langCompare = a.language.localeCompare(b.language)
-            if (langCompare !== 0) return langCompare
-            return a.name.localeCompare(b.name)
-        })
-        this.items = this.items
-    }
     Init(inputEditor, outputEditor){
-        this.inputEditor = new Editor(inputEditor, this.selectedLanguage);
+        this.inputEditor = new Editor(inputEditor);
         this.outputEditor = outputEditor
 
-        this.localStorageLoad(this.selectedItem)
+        this.SelectAny()
 
         this.inputEditor.addEventListener((value) => {
-            this.outputEditor.innerHTML = Parser.Parse(value, this.selectedLanguage);
-            if(this.selectedItem != ""){
-                this.save(this.selectedItem, value);
+            this.outputEditor.innerHTML = Parser.Parse(value, this.selectedItem.language);
+            if(this.selectedItem != null){
+                this.selectedItem.code = value
+                this.LocalStorageSaveSelected()
             }
         });
     }
-    save(selectedItem, value){
-        localStorage.setItem(selectedItem, JSON.stringify({
-          code: btoa(value),
-          language: this.selectedLanguage
-        }));
-    }
-    localStorageLoad(key){
-        if(key == null || key == ""){
-            this.selectedItem = null        
-            this.outputEditor.innerHTML = "";
-            return;
-        }
 
-        const value = JSON.parse(localStorage.getItem(key))
+    Add(){
+        const result = new Item()
+        result.name = "new"
+        let i = 0;
+        while(this.items.some(x=>x.name == result.name)){
+            result.name = "new " + ++i
+        }
+        if(this.categoryFilter != "----all"){
+            result.category = this.categoryFilter
+        }
+        this.items.push(result)
+        this.Select(result.id)
+    }
 
-        this.load(key, value)
+    Delete(){
+        localStorage.removeItem(this.selectedItem.key)
+        this.items = this.items.filter(x=>x!= this.selectedItem)
+        this.Select(this.items.at(0))
     }
-    load(key, value){
-        this.selectedItem = key
-        value.code = atob(value.code)
-        this.selectedLanguage = value.language
-        this.inputEditor.language =  value.language;
-        this.inputEditor.value = value.code
-        this.outputEditor.innerHTML = Parser.Parse(value.code, this.selectedLanguage);
-    }
-    changeLanguage(value) {
-        this.inputEditor.language = value;
-        this.selectedLanguage = value
-        this.RenameItem(this.selectedItem)
-        this.save(this.selectedItem, this.inputEditor.value)
-    }
-    deleteSelected(){
-        if(confirm(`Are you sure you want to delete ${this.selectedItem}`)) {
-            localStorage.removeItem(this.selectedItem);
-            this.items = this.items.filter(item => item.name !== this.selectedItem);
-            this.localStorageLoad(this.items.at(-1)?.name)
-        }
-    }
-    selectItem(value){
-        this.localStorageLoad(value)
-    }
-    AddItem(){
-        let i = 0
-        this.selectedItem = "new"
-        while(this.items.some(x=>x.name == this.selectedItem)){
-            this.selectedItem = "new " + ++i
-        }
-        this.CommitCurrent()
-        this.inputEditor.value = "@output Main\n\n"
-        this.save(this.selectedItem, this.inputEditor.value)
-        this.selectItem(this.selectedItem)
-    }
-    CommitCurrent(){
-        if(!this.items.some(x=>x.name == this.selectedItem)){
-            this.items.push({name: this.selectedItem, language: this.languageNameMap[this.selectedLanguage]})
-            this.SortItems()
-        }
-    }
-    RenameItem(value){
-        localStorage.removeItem(this.selectedItem)
-        this.items = this.items.filter(item => item.name !== this.selectedItem);
-        this.selectedItem = value
-        this.items.push({name: this.selectedItem,language:this.languageNameMap[this.selectedLanguage]})
-        this.save(this.selectedItem, this.inputEditor.value)
-    }
-    Export(){
-        const obj = {}
-        for(const [key, value] of Object.entries(localStorage)){
-          obj[key] = JSON.parse(value)
-        }
-        Json.save(obj, "all.tcpg.json")
-    }
-    Import(){
-        Json.load()
-        .then(json=>{
-            try {
-                localStorage.clear()
-                for(const [key, value] of Object.entries(json)){
-                    localStorage.setItem(key, JSON.stringify(value))
-                }
-                this.RefreshItems()
-                this.localStorageLoad(this.selectedItem)
-            }
-            catch {
-                
-            }
-        })
-    }
+
     Save(){
-        Json.save({
-            name: this.selectedItem,
-            code: btoa(this.inputEditor.value),
-            language: this.selectedLanguage
-        }, this.selectedItem + ".tcp.json")
+        Json.save(this.selectedItem.ToRaw(), this.selectedItem.name + ".json" )
     }
+
     Load(){
         Json.load()
-        .then(json=>{
-            try{
-                this.load(json.name, json)
-                this.CommitCurrent()
-                this.selectedItem = json.name
-                this.localStorageLoad(this.selectedItem)
+        .then(item=>{
+            const old = this.items.find(x=>x.id == item.id)
+            if(old){
+                Object.assign(old, item);
             }
-            catch{
+            else{
+                this.items.push(item)
             }
+            this.Select(item.id)
         })
     }
-    Clear(){
-        if(confirm(`Are you sure you want to delete all items`)) {
-            localStorage.clear()
-            this.RefreshItems()
+
+    Select(id){
+        this.selectedItem = this.items.find(x=>x.id == id)
+        this.inputEditor.value = this.selectedItem.code
+    }
+
+    Export(){
+        Json.save(this.items.map(x=>x.ToRaw()), "all.json" )
+    }
+
+    Import(){
+        Json.load()
+        .then(items=>{
+            this.Clear()
+            this.items = items.map(x=>{
+                x.code = atob(x.code)
+                return new Item(x)
+            })
+
+            for(const item of this.items){
+                this.LocalStorageSave(item)
+            }
+            
+            this.SelectAny()
+        })
+    }
+
+    SelectAny(){
+        if(this.items.length > 0){
+            this.Select(this.items[0].id)
         }
     }
+
+    Clear(){
+        for(const item of this.items){
+            localStorage.removeItem(item.key)
+        }
+        this.items = []
+    }
+
+    DoPassFilter(item){
+        return item.name.toLowerCase().includes(this.filter.toLowerCase()) && (this.categoryFilter == "----all" || item.category == this.categoryFilter)
+    }
+
+    LocalStorageSaveSelected(){
+        this.LocalStorageSave(this.selectedItem)
+    }
+    LocalStorageSave(item){
+        localStorage.setItem(item.key, JSON.stringify(item.ToRaw()))
+    }
+
+    LocalStorageLoadAll(){
+        for(const key of Object.keys(localStorage)){
+            if(Item.IsValidKey(key)){
+                const value = JSON.parse(localStorage.getItem(key))
+                value.code = atob(value.code)
+                this.items.push(new Item(value))
+            }
+        }
+    }
+
     get IsAnyItemSelected(){
-        return this.selectedItem != null && this.selectedItem != ""
+        return this.selectedItem != null
+    }
+
+    get categories(){
+        const result = new Set()
+        for(const item of this.items){
+            if(item.category != ""){
+                result.add(item.category)
+            }
+        }
+        return Array.from(result)
     }
 }
 

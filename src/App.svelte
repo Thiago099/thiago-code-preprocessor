@@ -5,84 +5,159 @@
   import { Editor } from "./lib/editor";
   import {Manager} from "./lib/manager.svelte"
   import { makeGridAreasResizable } from "./lib/grid-resize-helper";
+
+  import { ViewManager } from "./lib/view-manager.svelte";
+
   let editorContainer,
     outputContainer,
     gridContainer;
 
   const manager = new Manager()
+  const viewManager = new ViewManager()
 
   onMount(() => {
-    makeGridAreasResizable(gridContainer,{
-        thickness:"15px",
-        minWidth: 300, 
-        minHeight: 300,
-        fixedAreas: ["header"]
-    })
+     makeGridAreasResizable(gridContainer,{
+         thickness:"15px",
+         minWidth: 300, 
+         minHeight: 300,
+         fixedAreas: ["header"]
+     })
       manager.Init(editorContainer, outputContainer)
   });
 
 </script>
 
 <main>
-  <div class="grid-container" bind:this={gridContainer}>
-    <div class="section grid-left {manager.IsAnyItemSelected ? "" : "disabled" }" bind:this={editorContainer}></div>
-    <div class="section grid-panel">
+
+  <div class="grid-container" bind:this={gridContainer} style="grid-template-areas:{viewManager.gridAreas};grid-template-columns:{viewManager.gridColumns}">
+    <div class="section grid-blank center {viewManager.displayBlank?"":"hidden"}">
+      <h1>No views enabled</h1>
+    </div>
+    <div class="section grid-left {manager.IsAnyItemSelected ? "" : "disabled" } {viewManager.displayLeftView?"":"hidden"}" bind:this={editorContainer}></div>
+    <div class="section grid-panel2 {viewManager.displayRightPanel?"":"hidden"}">
+      {#if manager.selectedItem}
+      <h4 style="margin-top: 30px;">Properties</h4>
+      <hr/>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.name} oninput={x=>manager.LocalStorageSaveSelected()}>
+        <label for="floatingInput"><i class="fa-solid fa-file"></i> Name</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.category} oninput={x=>manager.LocalStorageSaveSelected()}>
+        <label for="floatingInput"><i class="fa-solid fa-layer-group"></i> Category</label>
+      </div>
+      <div class="form-floating">
+        <select
+        class="form-select"
+        id="languageInput"
+        oninput={x=>manager.LocalStorageSaveSelected()}
+        bind:value={manager.selectedItem.language}
+      >
+        {#each Editor.languages as language}
+            <option value={language.id}>{language.aliases?.at(0)??language.id}</option>
+        {/each}
+      </select>
+        <label for="languageInput"><i class="fa-solid fa-comments"></i> Language</label>
+      </div>
+      {/if}
+    </div>
+    <div class="section grid-panel {viewManager.displayLeftPanel?"":"hidden"}">
       <h4 style="margin-top: 30px;">File</h4>
       <hr/>
       <div class="form-floating">
         <input type="text" bind:value={manager.filter} class="form-control" id="queryInput">
         <label for="queryInput"><i class="fa-solid fa-magnifying-glass"></i> Filter</label>
       </div>
-      <select class="form-select form-select-lg mb-3" size="10" value={manager.selectedItem} oninput={e=>manager.selectItem(e.target.value)} >
-        {#each manager.items.filter(x=>x.name.toLowerCase().includes(manager.filter.toLowerCase())) as item}
-          <option value={item.name}>{item.name} ({item.language})</option>
-        {/each}
-      </select>
-      <div class="button-container">
-        <button class="form-control" onclick={e=>manager.deleteSelected()}><i class="fa-solid fa-trash-can"></i> Delete</button>
-        <button class="form-control" onclick={e=>manager.AddItem()}><i class="fa-solid fa-plus"></i> Add</button>
+        <div class="form-floating">
+          <select
+          class="form-select"
+          id="categoryFilter"
+          bind:value={manager.categoryFilter}
+        >
+          <option value="----all">All</option>
+          {#each manager.categories as category}
+            <option value={category}>{category}</option>
+          {/each}
+        </select>
+        <label for="categoryFilter"><i class="fa-solid fa-layer-group"></i> Category Filter</label>
       </div>
       <div class="button-container">
-        <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button>
+        <button class="form-control" onclick={e=>manager.Add()}><i class="fa-solid fa-plus"></i> Add</button>
+        <button class="form-control" onclick={e=>manager.Delete()}><i class="fa-solid fa-trash-can"></i> Delete</button>
+      </div>
+      <div class="button-container">
         <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button>
+        <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button>
       </div>
-      <h4 style="margin-top: 30px;">Properties</h4>
-      <hr/>
-      <div class="form-floating">
-        <input type="text" class="form-control" id="floatingInput" value={manager.selectedItem} oninput={e=>manager.RenameItem(e.target.value)} >
-        <label for="floatingInput"><i class="fa-solid fa-file"></i> Name</label>
-      </div>
-      <div class="form-floating">
-        <select
-        class="form-select"
-        id="languageInput"
-        bind:value={manager.selectedLanguage}
-        oninput={e=>manager.changeLanguage(e.target.value)}
-      >
-        {#each Editor.languages as language}
-            <option value={language.id}>{manager.languageNameMap[language.id]}</option>
+      <select class="form-select form-select-lg mb-3" size="20" value={manager.selectedItem?.id} oninput={e=>manager.Select(e.target.value)} >
+        {#each manager.items.filter(x=>manager.DoPassFilter(x)) as item}
+          <option value={item.id}>{item.name} ({Editor.GetLanguageName(item.language)})</option>
         {/each}
       </select>
-        <label for="languageInput"><i class="fa-solid fa-comments"></i> Language</label>
-      </div>
-      <h4 style="margin-top: 30px;">Export</h4>
-      <hr/>
-      <div class="button-container">
-      <button class="form-control" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export All</button>
-      <button class="form-control" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import All</button>
-      </div>
-      <div class="button-container">
-      <button class="form-control" onclick={e=>manager.Clear()}><i class="fa-solid fa-download"></i> Clear</button>
-    </div>
-    </div>
-    <div class="section output-section grid-right" bind:this={outputContainer}></div>
-    <div class="section grid-header flex-center logo-container"><img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor</div>
 
-   
+
+    </div>
+    <div class="section output-section grid-right {viewManager.displayRightView?"":"hidden"}" bind:this={outputContainer}></div>
+    <div class="section grid-header flex-center logo-container">
+      <img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor
+    
+      <div style="margin-right: 30px;"></div>
+      <div class="dropdown">
+        <button class="btn from-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          File
+        </button>
+        <ul class="dropdown-menu" style="width: 300px">
+          <li><button class="dropdown-item" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export all</button></li>
+          <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import all</button></li>
+          <div class="dropdown-divider"></div>
+          <li><button class="dropdown-item" onclick={e=>manager.Clear()}><i class="fa-solid fa-download"></i> Clear</button></li>
+        </ul>
+      </div>
+      <div style="margin-right: 10px;"></div>
+      <div class="dropdown">
+        <button class="btn from-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          View
+        </button>
+        <ul class="dropdown-menu" style="width: 300px">
+          <li>
+            <div class="form-check form-switch" style="margin:0 10px;">
+              <input class="form-check-input" type="checkbox" id="leftPanelDisplay" bind:checked={viewManager.displayLeftPanel} oninput={e=>viewManager.Save("displayLeftPanel", e.target.checked)}>
+              <label class="form-check-label" for="leftPanelDisplay">Display Left Menu</label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check form-switch" style="margin:0 10px;">
+              <input class="form-check-input" type="checkbox" id="leftViewDisplay" bind:checked={viewManager.displayLeftView} oninput={e=>viewManager.Save("displayLeftView", e.target.checked)}>
+              <label class="form-check-label" for="leftViewDisplay">Display Left View</label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check form-switch" style="margin:0 10px;">
+              <input class="form-check-input" type="checkbox" id="rightViewDisplay" bind:checked={viewManager.displayRightView} oninput={e=>viewManager.Save("displayRightView", e.target.checked)}>
+              <label class="form-check-label" for="rightViewDisplay">Display Right View</label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check form-switch" style="margin:0 10px;">
+              <input class="form-check-input" type="checkbox" id="rightPanelDisplay" bind:checked={viewManager.displayRightPanel} oninput={e=>viewManager.Save("displayRightPanel", e.target.checked)}>
+              <label class="form-check-label" for="rightPanelDisplay">Display Right Menu</label>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </main>
 
 <style>
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+  .hidden{
+    display: none;
+  }
   .logo-container{
     font-weight: bold;
     font-size: 1.5em;
@@ -102,12 +177,7 @@
   }
   .grid-container {
     display: grid;
-    grid-template-columns: 300px 1fr 1fr; 
     grid-template-rows: 40px 1fr;
-    grid-template-areas:
-      "header header header"
-      "panel left right";
-
     height: 100vh;
     width: 100vw;
     gap: 1px;
@@ -122,8 +192,6 @@
     color: white;
   }
 
-
-
   .grid-left {
     grid-area: left;
   }
@@ -131,14 +199,16 @@
   .grid-panel {
     grid-area: panel;
   }
-  .grid-panel > *{
+  .grid-panel > *, .grid-panel2 > *{
     margin: 10px;
     width: calc(100% - 20px);
   }
   .grid-right {
     grid-area: right;
   }
-
+  .grid-blank {
+    grid-area: blank;
+  }
   .grid-header {
     grid-area: header;
   }

@@ -62,6 +62,20 @@ class Editor {
     static get languages(){
         return monaco.languages.getLanguages();
     }
+    static GetLanguageName(input){
+        if(input == null){
+            return null
+        }
+        for(const language of this.languages){
+            if(language.id == input){
+                if(language.aliases){
+                    return language.aliases[0]
+                }
+                return language.id
+            }
+        }
+        return null
+    }
     addEventListener(callback) {
         this.editor.onDidChangeModelContent((event) => {
             callback(this.value)

@@ -4,7 +4,7 @@ import { mount } from 'svelte'
 import './app.css'
 import App from './App.svelte'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import 'bootstrap'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'highlight.js/styles/vs2015.min.css'
 
