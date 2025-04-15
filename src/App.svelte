@@ -40,11 +40,24 @@
       <hr/>
       <div class="form-floating">
         <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.name} oninput={x=>manager.LocalStorageSaveSelected()}>
-        <label for="floatingInput"><i class="fa-solid fa-file"></i> Name</label>
+        <label for="floatingInput"><i class="fa-solid fa-file"></i> Enter Name</label>
       </div>
       <div class="form-floating">
         <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.category} oninput={x=>manager.LocalStorageSaveSelected()}>
-        <label for="floatingInput"><i class="fa-solid fa-layer-group"></i> Category</label>
+        <label for="floatingInput"><i class="fa-solid fa-layer-group"></i> Enter Category</label>
+      </div>
+      <div class="form-floating">
+          <select
+          class="form-select"
+          id="chooseCategory"
+          bind:value={manager.selectedItem.category}
+        >
+          <option value="">No Category</option>
+          {#each manager.categories as category}
+            <option value={category}>{category}</option>
+          {/each}
+        </select>
+        <label for="chooseCategory"><i class="fa-solid fa-layer-group"></i> Chose Category</label>
       </div>
       <div class="form-floating">
         <select
@@ -57,7 +70,7 @@
             <option value={language.id}>{language.aliases?.at(0)??language.id}</option>
         {/each}
       </select>
-        <label for="languageInput"><i class="fa-solid fa-comments"></i> Language</label>
+        <label for="languageInput"><i class="fa-solid fa-comments"></i> Choose Language</label>
       </div>
       {/if}
     </div>

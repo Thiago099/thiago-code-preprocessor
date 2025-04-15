@@ -10,7 +10,6 @@ class ViewManager{
 
     Load(name){
         const result = JSON.parse(localStorage.getItem("tcp-enable-"+name))??true
-        console.log(result)
         return result
     }
 
