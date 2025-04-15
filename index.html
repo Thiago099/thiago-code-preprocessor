@@ -1,14 +1,45 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>self["MonacoEnvironment"] = (function (paths) {
+          return {
+            globalAPI: false,
+            getWorkerUrl : function (moduleId, label) {
+              var result =  paths[label];
+              if (/^((http:)|(https:)|(file:)|(\/\/))/.test(result)) {
+                var currentUrl = String(window.location);
+                var currentOrigin = currentUrl.substr(0, currentUrl.length - window.location.hash.length - window.location.search.length - window.location.pathname.length);
+                if (result.substring(0, currentOrigin.length) !== currentOrigin) {
+                  var js = '/*' + label + '*/importScripts("' + result + '");';
+                  var blob = new Blob([js], { type: 'application/javascript' });
+                  return URL.createObjectURL(blob);
+                }
+              }
+              return result;
+            }
+          };
+        })({
+  "editorWorkerService": "/thiago-code-preprocessor/monacoeditorwork/editor.worker.bundle.js",
+  "css": "/thiago-code-preprocessor/monacoeditorwork/css.worker.bundle.js",
+  "html": "/thiago-code-preprocessor/monacoeditorwork/html.worker.bundle.js",
+  "json": "/thiago-code-preprocessor/monacoeditorwork/json.worker.bundle.js",
+  "typescript": "/thiago-code-preprocessor/monacoeditorwork/ts.worker.bundle.js",
+  "javascript": "/thiago-code-preprocessor/monacoeditorwork/ts.worker.bundle.js",
+  "less": "/thiago-code-preprocessor/monacoeditorwork/css.worker.bundle.js",
+  "scss": "/thiago-code-preprocessor/monacoeditorwork/css.worker.bundle.js",
+  "handlebars": "/thiago-code-preprocessor/monacoeditorwork/html.worker.bundle.js",
+  "razor": "/thiago-code-preprocessor/monacoeditorwork/html.worker.bundle.js"
+});</script>
+
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/icon-192.png" />
+    <link rel="icon" type="image/png" href="/thiago-code-preprocessor/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/thiago-code-preprocessor/manifest.json">
     <title>Code Preprocessor</title>
+    <script type="module" crossorigin src="/thiago-code-preprocessor/assets/index-D1_6381E.js"></script>
+    <link rel="stylesheet" crossorigin href="/thiago-code-preprocessor/assets/index-BdQZCRz0.css">
   </head>
   <body data-bs-theme="dark">
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <div id="app"></div>
   </body>
 </html>
