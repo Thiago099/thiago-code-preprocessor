@@ -11,26 +11,29 @@ html, body {
   background-color: rgb(129, 129, 129) !important;
 }
 
-.variable-highlight {
+.function-highlight {
   color: #dcdcaa !important;
 }
 .instruction-highlight {
-  color: #4ec9b0 !important;
+  color: #c586c0 !important;
 }
 .parenthesis-highlight {
   color: #d4d4d4 !important;
 }
 .property-highlight{
-  color: #c586c0 !important;
+  color: #9cdcfe !important;
 }
 .value-highlight {
   color: #ce9178 !important;
 }
 .data-highlight {
-  color: #a6ce78 !important;
+  color: #4ec9b0 !important;
 }
 .error-highlight{
   color: red !important;
+}
+.variable-highlight{
+  color: #569cd6 !important;
 }
 hr {
   margin-top: 1rem;

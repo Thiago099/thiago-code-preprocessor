@@ -26,11 +26,15 @@ class Manager{
 
         this.selectedItem = this.items[0]?.name
 
-        this.items = this.items.sort((a, b) => {
+        this.SortItems()
+    }
+    SortItems(){
+        this.items.sort((a, b) => {
             const langCompare = a.language.localeCompare(b.language)
             if (langCompare !== 0) return langCompare
             return a.name.localeCompare(b.name)
         })
+        this.items = this.items
     }
     Init(inputEditor, outputEditor){
         this.inputEditor = new Editor(inputEditor, this.selectedLanguage);
@@ -100,8 +104,7 @@ class Manager{
     CommitCurrent(){
         if(!this.items.some(x=>x.name == this.selectedItem)){
             this.items.push({name: this.selectedItem, language: this.languageNameMap[this.selectedLanguage]})
-            this.items.sort((a,b)=>a.name.localeCompare(b.name))
-            this.items = this.items
+            this.SortItems()
         }
     }
     RenameItem(value){

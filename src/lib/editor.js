@@ -52,6 +52,9 @@ class Editor {
     }
     set value(value) {
         this.editor.setValue(value)
+        this.editor.setPosition({ lineNumber: 1, column: 1 })
+        // this.editor.focus()
+        this.editor.setScrollTop(0)
     }
     get value() {
         return this.editor.getValue()
@@ -93,14 +96,13 @@ class Editor {
             } else if(match[3] || match[5]){
                 const name = match[3] ?? match[5]
                 const prop = match[4] ?? match[6]
-                console.log(prop)
                 start = match.index + name.length
                 highlight(model, matches, match.index, start, "instruction-highlight")
-                highlight(model, matches, start, start + prop.length, "variable-highlight")
+                highlight(model, matches, start, start + prop.length, match[4] ? "function-highlight" : "value-highlight")
             }
             else if(match[7]){
                 start = match.index + match[7].length+1 
-                 highlight(model, matches, match.index, start, "variable-highlight")
+                 highlight(model, matches, match.index, start, match[8]?"function-highlight":"property-highlight")
             }
             if(match[2] || match[8]){
                 const name = match[1] ? "data" : match[7]?.trim()?.toLocaleLowerCase();

@@ -73,13 +73,26 @@ class Parser {
             } else if(match[1] == "data"){
                 let props = match[3].trim()
                 props = props.substring(1, props.length - 1)
-                data[match[2].trim().toLocaleLowerCase()] = {obj:parseStringToObject(props), refs:getRefs(props)}
+                data[match[2].trim().toLocaleLowerCase()] = {obj: parseStringToObject(props), refs: getRefs(props), done: false}
             }
         }
 
+
         for(const [key, value] of Object.entries(data)){
+            dataLoop(value)
+        }
+        
+        function dataLoop(value){
+
+            if(value.done) {
+                return
+            }
+
+            value.done = true
+
             for(const item of value.refs){
                 if(item in data){
+                    dataLoop(data[item])
                     value.obj = {...data[item].obj, ...value.obj}
                 }
             }
