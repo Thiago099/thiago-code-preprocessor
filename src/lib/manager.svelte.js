@@ -128,6 +128,7 @@ class Manager{
         if(this.selectedItem){
             this.inputEditor.value = this.selectedItem.code
             this.inputEditor.language = this.selectedItem.language
+            this.outputEditor.innerHTML = Parser.Parse(this.selectedItem.code, this.selectedItem.language);
             localStorage.setItem("tcp-selected", id)
         }
     }
