@@ -34,6 +34,43 @@
       <h1>No views enabled</h1>
     </div>
     <div class="section grid-left {manager.IsAnyItemSelected ? "" : "disabled" } {viewManager.displayLeftView?"":"hidden"}" bind:this={editorContainer}></div>
+    <div class="section grid-panel {viewManager.displayLeftPanel?"":"hidden"}">
+      <h4 style="margin-top: 30px;">File</h4>
+      <hr/>
+      <div class="form-floating">
+        <input type="text" bind:value={manager.filter} class="form-control" id="queryInput">
+        <label for="queryInput"><i class="fa-solid fa-magnifying-glass"></i> Filter</label>
+      </div>
+        <div class="form-floating">
+          <select
+          class="form-select"
+          id="categoryFilter"
+          bind:value={manager.categoryFilter}
+        >
+          <option value="----all">All</option>
+          <option value="----none">No Category</option>
+          {#each manager.categories as category}
+            <option value={category}>{category}</option>
+          {/each}
+        </select>
+        <label for="categoryFilter"><i class="fa-solid fa-layer-group"></i> Category Filter</label>
+      </div>
+      <div class="button-container">
+        <button class="form-control" onclick={e=>manager.Add()}><i class="fa-solid fa-plus"></i> Add</button>
+        <button class="form-control" onclick={e=>manager.ConfirmDelete()}><i class="fa-solid fa-trash-can"></i> Delete</button>
+      </div>
+      <select class="form-select form-select-lg mb-3" size="23" value={manager.selectedItem?.id} oninput={e=>manager.Select(e.target.value)} >
+        {#each Object.entries(manager.GetListObjects()) as [key, value]}
+        <optgroup label={key}>
+          {#each value as item}
+          <option style="padding-left: 30px;" value={item.id}>{item.name} ({Editor.GetLanguageName(item.language)})</option>
+          {/each}
+        </optgroup>
+        {/each}
+      </select>
+
+
+    </div>
     <div class="section grid-panel2 {viewManager.displayRightPanel?"":"hidden"}">
       {#if manager.selectedItem}
       <h4 style="margin-top: 30px;">Properties</h4>
@@ -73,48 +110,13 @@
       </select>
         <label for="languageInput"><i class="fa-solid fa-comments"></i> Choose Language</label>
       </div>
-      {/if}
-    </div>
-    <div class="section grid-panel {viewManager.displayLeftPanel?"":"hidden"}">
-      <h4 style="margin-top: 30px;">File</h4>
+      <h4 style="margin-top: 30px;">Persistence</h4>
       <hr/>
-      <div class="form-floating">
-        <input type="text" bind:value={manager.filter} class="form-control" id="queryInput">
-        <label for="queryInput"><i class="fa-solid fa-magnifying-glass"></i> Filter</label>
-      </div>
-        <div class="form-floating">
-          <select
-          class="form-select"
-          id="categoryFilter"
-          bind:value={manager.categoryFilter}
-        >
-          <option value="----all">All</option>
-          <option value="----none">No Category</option>
-          {#each manager.categories as category}
-            <option value={category}>{category}</option>
-          {/each}
-        </select>
-        <label for="categoryFilter"><i class="fa-solid fa-layer-group"></i> Category Filter</label>
-      </div>
-      <div class="button-container">
-        <button class="form-control" onclick={e=>manager.Add()}><i class="fa-solid fa-plus"></i> Add</button>
-        <button class="form-control" onclick={e=>manager.ConfirmDelete()}><i class="fa-solid fa-trash-can"></i> Delete</button>
-      </div>
       <div class="button-container">
         <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button>
         <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button>
       </div>
-      <select class="form-select form-select-lg mb-3" size="20" value={manager.selectedItem?.id} oninput={e=>manager.Select(e.target.value)} >
-        {#each Object.entries(manager.GetListObjects()) as [key, value]}
-        <optgroup label={key}>
-          {#each value as item}
-          <option style="padding-left: 30px;" value={item.id}>{item.name} ({Editor.GetLanguageName(item.language)})</option>
-          {/each}
-        </optgroup>
-        {/each}
-      </select>
-
-
+      {/if}
     </div>
     <div class="section output-section grid-right {viewManager.displayRightView?"":"hidden"}" bind:this={outputContainer}></div>
     <div class="section grid-header flex-center logo-container">
