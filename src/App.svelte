@@ -155,13 +155,12 @@
           <li><button class="dropdown-item" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button></li>
           <li><button class="dropdown-item" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button></li>
           <div class="dropdown-divider"></div>
+          <li><button class="dropdown-item" onclick={e=>manager.DownloadHtml()}><i class="fa-solid fa-code"></i> Export Html</button></li>
+          <div class="dropdown-divider"></div>
           <li><button class="dropdown-item" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export all</button></li>
           <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-triangle-exclamation"></i> Import all</button></li>
           <div class="dropdown-divider"></div>
           <li><button class="dropdown-item" onclick={e=>manager.ConfirmClean()}><i class="fa-solid fa-triangle-exclamation"></i> Clear</button></li>
-          <div class="dropdown-divider"></div>
-          <li><button class="dropdown-item" onclick={e=>manager.DownloadHtml()}><i class="fa-solid fa-code"></i> Export Html</button></li>
-        
         </ul>
       </div>
       <div style="margin-right: 10px;"></div>
