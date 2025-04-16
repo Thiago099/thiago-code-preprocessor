@@ -160,6 +160,8 @@
           <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-triangle-exclamation"></i> Import all</button></li>
           <div class="dropdown-divider"></div>
           <li><button class="dropdown-item" onclick={e=>manager.ConfirmClean()}><i class="fa-solid fa-triangle-exclamation"></i> Clear</button></li>
+          <div class="dropdown-divider"></div>
+          <li><button class="dropdown-item" onclick={e=>manager.DownloadHtml()}><i class="fa-solid fa-code"></i> Export Html</button></li>
         
         </ul>
       </div>

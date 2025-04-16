@@ -1,4 +1,4 @@
-import { Editor, Parser, Json } from "../lib/_lib";
+import { Editor, Parser, Json, Persistence } from "../lib/_lib";
 import { Item } from "../entity/_entity";
 import hljs from "highlight.js";
 
@@ -216,6 +216,10 @@ class Manager{
     GetSelectedCode(value){
         const result = this.selectedItem.propertyReplacer.ReplaceAll(value)
         return hljs.highlight(result,{language:this.selectedItem.language}).value
+    }
+
+    DownloadHtml(){
+        Persistence.save(this.selectedItem.ToHtml(), this.selectedItem.name+".html")
     }
 
     SortItems(){

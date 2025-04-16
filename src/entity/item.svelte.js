@@ -1,5 +1,7 @@
 import { UUID } from "../lib/uuid";
-
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
 class Item {
     id = UUID.Create()
     name = $state("")
@@ -35,6 +37,23 @@ class Item {
             code: btoa(this.code),
             category: this.category
         }
+    }
+    ToHtml(){
+        let html = ""
+        const outputs = []
+        for(const [key, value] of Object.entries(this.output)){
+            
+            const current = {id:UUID.Create(), value:value}
+            outputs.push(current)
+            html += `<h1>${key}</h1>\n<pre id="${current.id}"></pre>\n`
+        }
+        for(const [key, value] of Object.entries(this.propertyReplacer.data)){
+            html += `<h1>${key}</h1>\n`
+            for(const item of value){
+                html += `<div><label>${capitalizeFirstLetter(item.key)}</label>\n<input id="${item.id}" type="text" value="${item.defaultValue}"/></div>`
+            }
+        }
+        return html
     }
 }
 
