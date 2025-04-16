@@ -2,6 +2,7 @@ import { Editor } from "./editor";
 import { Parser } from "./parser";
 import { Json } from "./json";
 import { UUID } from "./uuid";
+
 class Item {
     id = UUID.Create()
     name = $state("")
@@ -71,7 +72,7 @@ class Manager{
         this.SelectAny()
 
         this.inputEditor.addEventListener((value) => {
-            this.outputEditor.innerHTML = Parser.Parse(value, this.selectedItem.language);
+            this.UpdateOutput(value, this.selectedItem.language);
             if(this.selectedItem != null){
                 this.selectedItem.code = value
                 this.LocalStorageSave(this.selectedItem)
@@ -128,7 +129,7 @@ class Manager{
         if(this.selectedItem){
             this.inputEditor.value = this.selectedItem.code
             this.inputEditor.language = this.selectedItem.language
-            this.outputEditor.innerHTML = Parser.Parse(this.selectedItem.code, this.selectedItem.language);
+            this.UpdateOutput(this.selectedItem.code, this.selectedItem.language);
             localStorage.setItem("tcp-selected", id)
         }
         else{
@@ -215,7 +216,13 @@ class Manager{
             }
         }
     }
-
+    UpdateOutput(code, language){
+        const [outputs, globalVariables] = Parser.Parse(code, language);
+        this.outputEditor.innerHTML = `<pre class="code-block">${JSON.stringify(globalVariables, null, 4)}</pre>`
+        for(const [key, value] of Object.entries(outputs)){
+            this.outputEditor.innerHTML += `<pre class="code-block">${value.raw}</pre>`
+        }
+    }
     get IsAnyItemSelected(){
         return this.selectedItem != null
     }

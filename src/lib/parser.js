@@ -1,6 +1,7 @@
 import hljs from "highlight.js";
 import { UUID } from "./uuid";
 
+
 function splitInput(input){
     input = input.trim()
 
@@ -68,6 +69,9 @@ class Parser {
         const output = {}
         const data = {}
 
+        const globalVariables = {}
+        const globalVariablesOutput = {}
+
         while ((match = exp.exec(input))) {
             if(match[1] == "define"){
                 context[match[2].trim().toLocaleLowerCase()] = match[3].trim();
@@ -76,7 +80,22 @@ class Parser {
             } else if(match[1] == "data"){
                 let props = match[3].trim()
                 props = props.substring(1, props.length - 1)
-                data[match[2].trim().toLocaleLowerCase()] = {obj: parseStringToObject(props), refs: getRefs(props), done: false}
+                const parsed = parseStringToObject(props)
+                const obj = {}
+                const out = []
+                for(const [key, value] of Object.entries(parsed)) {
+                    const id = "@"+ UUID.Create()
+                    globalVariables[id] = {
+                        key,
+                        value
+                    }
+                    obj[key] = id
+                    out.push({key, id, defaultValue: value})
+                }
+                if(Object.keys(out).length > 0){
+                    globalVariablesOutput[match[2].trim()] = out
+                }
+                data[match[2].trim().toLocaleLowerCase()] = {obj: obj, refs: getRefs(props), done: false}
             }
         }
 
@@ -136,14 +155,17 @@ class Parser {
             });
         }
         
-        let result = ""
+        let outputs = {}
         
         for(const [key, value] of Object.entries(output)){
             const code = loop(value, {})
-            result+= `<h3>${key} <button class="form-control output-copy-button" onclick="window.copyToClipboard('${btoa(code)}')"><i class="fa-solid fa-copy"></i> Copy Code</button></h3><pre class="code-block">${hljs.highlight(code,{language:language}).value}</pre>`;
+            outputs[key] = {
+                html: hljs.highlight(code,{language:language}).value, // TODO: Decouple highlight and parsing
+                raw: code
+            }
         }
 
-        return result
+        return [outputs, globalVariablesOutput]
     }
 }
 
