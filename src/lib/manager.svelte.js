@@ -121,6 +121,7 @@ class Manager{
         this.selectedItem = this.items.find(x=>x.id == id)
         if(this.selectedItem){
             this.inputEditor.value = this.selectedItem.code
+            this.inputEditor.language = this.selectedItem.language
             localStorage.setItem("tcp-selected", id)
         }
     }
