@@ -209,7 +209,10 @@ class Manager{
             this.Clear()
         } 
     }
-
+    ReplaceAndCopyToClipboard(value){
+        const result = this.selectedItem.propertyReplacer.ReplaceAll(value)
+        navigator.clipboard.writeText(result);
+    }
     GetSelectedCode(value){
         const result = this.selectedItem.propertyReplacer.ReplaceAll(value)
         return hljs.highlight(result,{language:this.selectedItem.language}).value

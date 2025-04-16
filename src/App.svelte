@@ -114,8 +114,11 @@
       {#if manager.selectedItem}
       {#if manager.selectedItem.output}
           {#each Object.entries(manager.selectedItem.output) as [key, value]}
-            <h3 class="margin-top-20">{key}</h3>
-            <pre>{@html manager.GetSelectedCode(value)}</pre>
+            <h3 class="margin-top-20" style="display: flex;align-items:center;margin-bottom:10px;">
+              {key} 
+              <button class="form-control" style="width: 100px;display:inline-block;margin-left:20px;" onclick={e=>manager.ReplaceAndCopyToClipboard(value)}><i class="fa-solid fa-copy"></i> Copy</button>
+            </h3>
+            <pre class="code-block">{@html manager.GetSelectedCode(value)}</pre>
           {/each}
         {/if}
         {#if manager.selectedItem.propertyReplacer}
