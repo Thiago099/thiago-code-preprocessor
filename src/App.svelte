@@ -123,7 +123,6 @@
           {#each Object.entries(manager.selectedItem.propertyReplacer.data) as [key, value]}
             <h3 class="section-title">
               {key}
-              <button class="form-control" style="width: 200px;display:inline-block;margin-left:20px;" onclick={e=>manager.selectedItem.propertyReplacer.Reset(key)}><i class="fa-solid fa-arrows-rotate"></i> Reset Section</button>
             </h3>
             {#each value as item}
             <div class="input-group margin-top-10">
