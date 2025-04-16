@@ -131,6 +131,12 @@ class Manager{
             this.outputEditor.innerHTML = Parser.Parse(this.selectedItem.code, this.selectedItem.language);
             localStorage.setItem("tcp-selected", id)
         }
+        else{
+            this.outputEditor.innerHTML = ""
+            this.inputEditor.language = "javascript"
+            this.inputEditor.value = ""
+            this.selectedItem = null
+        }
     }
 
     Export(){
