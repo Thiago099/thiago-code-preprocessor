@@ -153,8 +153,8 @@
         </button>
         <ul class="dropdown-menu" style="width: 300px">
 
-          <li><button class="dropdown-item" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button></li>
           <li><button class="dropdown-item" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button></li>
+          <li><button class="dropdown-item" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button></li>
           <div class="dropdown-divider"></div>
           <li><button class="dropdown-item" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export all</button></li>
           <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-triangle-exclamation"></i> Import all</button></li>
