@@ -114,7 +114,9 @@
     </div>
     <div class="section output-section grid-right {viewManager.displayRightView?"":"hidden"}" bind:this={outputContainer}></div>
     <div class="section grid-header flex-center logo-container">
-      <img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor
+      <div style="position: absolute;left:30px;">
+        <img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor
+      </div>
     
       <div style="margin-right: 30px;"></div>
       <div class="dropdown">
