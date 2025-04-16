@@ -66,8 +66,6 @@
         </optgroup>
         {/each}
       </select>
-
-
     </div>
     <div class="section grid-panel2 {viewManager.displayRightPanel?"":"hidden"}">
       {#if manager.selectedItem}
@@ -114,7 +112,7 @@
       {#if manager.selectedItem}
       {#if manager.selectedItem.output}
           {#each Object.entries(manager.selectedItem.output) as [key, value]}
-            <h3 class="margin-top-20" style="display: flex;align-items:center;margin-bottom:10px;">
+            <h3 class="section-title">
               {key} 
               <button class="form-control" style="width: 100px;display:inline-block;margin-left:20px;" onclick={e=>manager.ReplaceAndCopyToClipboard(value)}><i class="fa-solid fa-copy"></i> Copy</button>
             </h3>
@@ -123,12 +121,20 @@
         {/if}
         {#if manager.selectedItem.propertyReplacer}
           {#each Object.entries(manager.selectedItem.propertyReplacer.data) as [key, value]}
-            <h3 class="margin-top-20">{key}</h3>
+            <h3 class="section-title">
+              {key}
+              <button class="form-control" style="width: 200px;display:inline-block;margin-left:20px;" onclick={e=>manager.selectedItem.propertyReplacer.Reset(key)}><i class="fa-solid fa-arrows-rotate"></i> Reset Section</button>
+            </h3>
             {#each value as item}
-              <div class="form-floating margin-top-10">
+            <div class="input-group margin-top-10">
+              <div class="form-floating flex-grow-1">
                 <input type="text" bind:value={item.value} class="form-control" id={item.id}>
                 <label for={item.id}><i class="fa-solid fa-magnifying-glass"></i> {item.key}</label>
               </div>
+              <button class="btn btn-secondary" type="button" onclick={e=>item.Reset()}>
+                <i class="fa-solid fa-arrows-rotate"></i> Reset
+              </button>
+            </div>
             {/each}
         
           {/each}
@@ -197,8 +203,13 @@
 .margin-top-10{
   margin-top: 10px;
 }
-.margin-top-20{
+.section-title{
+  display: flex;
+  align-items:center;
+  margin-bottom:10px;
   margin-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #aaa;
 }
 .center{
   display: flex;

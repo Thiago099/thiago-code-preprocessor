@@ -10,6 +10,9 @@ class Property {
         this.defaultValue = defaultValue
         this.value = defaultValue
     }
+    Reset(){
+        this.value = this.defaultValue
+    }
     ReplaceAll(text) {
         return text.replaceAll(this.id, this.value ?? this.defaultValue)
     }

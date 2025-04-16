@@ -13,6 +13,11 @@ class PropertyReplacer {
         }
         return text
     }
+    Reset(section){
+        for(const item of this.data[section]){
+            item.Reset()
+        }
+    }
 }
 
 export { PropertyReplacer }
