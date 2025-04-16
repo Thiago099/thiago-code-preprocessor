@@ -96,7 +96,7 @@ class Manager{
     Delete(){
         localStorage.removeItem(this.selectedItem.key)
         this.items = this.items.filter(x=>x!= this.selectedItem)
-        this.Select(this.items.at(0))
+        this.Select(this.items.at(0)?.id)
     }
 
     Save(){
