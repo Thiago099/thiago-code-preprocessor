@@ -6,7 +6,7 @@ class Item {
     language = $state("javascript")
     code = $state("")
     category = $state("")
-    outputData = $state(null)
+    propertyReplacer = $state(null)
     output = $state(null)
     static matchKeyRegex = /tcp-item-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
     get key() {

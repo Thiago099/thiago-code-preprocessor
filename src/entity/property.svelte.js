@@ -1,7 +1,6 @@
 import { UUID } from "../lib/uuid";
 
-
-class ReplaceData {
+class Property {
     key = ""
     id = "@" + UUID.Create()
     defaultValue = ""
@@ -16,4 +15,4 @@ class ReplaceData {
     }
 }
 
-export { ReplaceData }
+export { Property }

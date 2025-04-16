@@ -118,8 +118,8 @@
             <pre>{@html manager.GetSelectedCode(value)}</pre>
           {/each}
         {/if}
-        {#if manager.selectedItem.outputData}
-          {#each Object.entries(manager.selectedItem.outputData.data) as [key, value]}
+        {#if manager.selectedItem.propertyReplacer}
+          {#each Object.entries(manager.selectedItem.propertyReplacer.data) as [key, value]}
             <h3 class="margin-top-20">{key}</h3>
             {#each value as item}
               <div class="form-floating margin-top-10">

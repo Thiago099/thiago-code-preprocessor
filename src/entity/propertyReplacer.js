@@ -1,4 +1,4 @@
-class GlobalData {
+class PropertyReplacer {
     data = {}
     constructor(){
     }
@@ -15,4 +15,4 @@ class GlobalData {
     }
 }
 
-export { GlobalData }
+export { PropertyReplacer }

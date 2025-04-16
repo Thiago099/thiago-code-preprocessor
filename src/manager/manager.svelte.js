@@ -36,7 +36,7 @@ class Manager{
         this.SelectAny()
 
         this.inputEditor.addEventListener((value) => {
-            this.UpdateOutput(value, this.selectedItem.language);
+            this.UpdateOutput(value);
             if(this.selectedItem != null){
                 this.selectedItem.code = value
                 this.LocalStorageSave(this.selectedItem)
@@ -93,7 +93,7 @@ class Manager{
         if(this.selectedItem){
             this.inputEditor.value = this.selectedItem.code
             this.inputEditor.language = this.selectedItem.language
-            this.UpdateOutput(this.selectedItem.code, this.selectedItem.language);
+            this.UpdateOutput(this.selectedItem.code);
             localStorage.setItem("tcp-selected", id)
         }
         else{
@@ -180,9 +180,9 @@ class Manager{
             }
         }
     }
-    UpdateOutput(code, language){
-        const [outputs, globalVariables] = Parser.Parse(code, language);
-        this.selectedItem.outputData = globalVariables
+    UpdateOutput(code){
+        const [outputs, globalVariables] = Parser.Parse(code);
+        this.selectedItem.propertyReplacer = globalVariables
         this.selectedItem.output = outputs
     }
     get IsAnyItemSelected(){
@@ -211,7 +211,7 @@ class Manager{
     }
 
     GetSelectedCode(value){
-        const result = this.selectedItem.outputData.ReplaceAll(value)
+        const result = this.selectedItem.propertyReplacer.ReplaceAll(value)
         return hljs.highlight(result,{language:this.selectedItem.language}).value
     }
 

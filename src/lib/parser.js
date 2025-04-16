@@ -1,4 +1,4 @@
-import { GlobalData, ReplaceData } from "../entity/_entity";
+import { PropertyReplacer, Property } from "../entity/_entity";
 
 function splitInput(input){
     input = input.trim()
@@ -57,7 +57,7 @@ function parseStringToObject(input) {
 }
 
 class Parser {
-    static Parse(input, language) {
+    static Parse(input) {
         const context = {};
 
         const exp = /@(define|output|data)\s+([\w ]+)(.*?)(?=@define|@output|@data|$)/gs;
@@ -67,7 +67,7 @@ class Parser {
         const output = {}
         const data = {}
 
-        const globalVariables = new GlobalData()
+        const globalVariables = new PropertyReplacer()
 
         while ((match = exp.exec(input))) 
         {
@@ -88,7 +88,7 @@ class Parser {
                 const out = []
                 
                 for (const [key, value] of Object.entries(parsed)) {
-                    const current = new ReplaceData(key, value)
+                    const current = new Property(key, value)
                     obj[key] = current.id
                     out.push(current)
                 }
