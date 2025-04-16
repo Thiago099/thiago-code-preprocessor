@@ -2,7 +2,7 @@ import { Editor } from "./editor";
 import { Parser } from "./parser";
 import { Json } from "./json";
 import { UUID } from "./uuid";
-class Item{
+class Item {
     id = UUID.Create()
     name = $state("")
     language = $state("javascript")
@@ -14,15 +14,18 @@ class Item{
     }
     constructor(source = null) {
         if(source != null){
-            this.id = source.id
-            this.name = source.name
-            this.language = source.language
-            this.code = atob(source.code)
-            this.category = source.category
+            this.Assing(source)
         }
     }
     static IsValidKey(text){
         return Item.matchKeyRegex.test(text)
+    }
+    Assing(source){
+        this.id = source.id
+        this.name = source.name
+        this.language = source.language
+        this.code = atob(source.code)
+        this.category = source.category
     }
     ToRaw(){
         return {
@@ -105,7 +108,7 @@ class Manager{
         .then(item=>{
             const old = this.items.find(x=>x.id == item.id)
             if(old){
-                Object.assign(old, item);
+                old.Assing(item)
             }
             else{
                 this.items.push(item)
