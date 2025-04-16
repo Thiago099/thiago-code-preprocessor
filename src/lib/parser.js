@@ -1,4 +1,5 @@
 import hljs from "highlight.js";
+import { UUID } from "./uuid";
 
 function splitInput(input){
     input = input.trim()
@@ -9,6 +10,7 @@ function splitInput(input){
 
     return input.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g);
 }
+
 function getRefs(input){
     const refs = []
     const pairs = splitInput(input)
@@ -26,6 +28,7 @@ function getRefs(input){
 
     return refs
 }
+
 function parseStringToObject(input) {
 
     let obj = {};
@@ -77,7 +80,6 @@ class Parser {
             }
         }
 
-
         for(const [key, value] of Object.entries(data)){
             dataLoop(value)
         }
@@ -97,7 +99,6 @@ class Parser {
                 }
             }
         }
-
 
         const regex = /@([a-zA-Z0-9_]+)(\(.*?\)){0,1}/gs;
 
@@ -134,6 +135,7 @@ class Parser {
                 return result;
             });
         }
+        
         let result = ""
         
         for(const [key, value] of Object.entries(output)){

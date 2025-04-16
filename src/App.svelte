@@ -56,8 +56,8 @@
         <label for="categoryFilter"><i class="fa-solid fa-layer-group"></i> Category Filter</label>
       </div>
       <div class="button-container">
-        <button class="form-control" onclick={e=>manager.Add()}><i class="fa-solid fa-plus"></i> Add</button>
-        <button class="form-control" onclick={e=>manager.ConfirmDelete()}><i class="fa-solid fa-trash-can"></i> Delete</button>
+        <button class="form-control" onclick={e=>manager.Add()}><i class="fa-solid fa-plus text-success"></i> Add</button>
+        <button class="form-control" onclick={e=>manager.ConfirmDelete()}><i class="fa-solid fa-trash-can text-danger"></i> Delete</button>
       </div>
       <select class="form-select form-select-lg mb-3" size="23" value={manager.selectedItem?.id} oninput={e=>manager.Select(e.target.value)} >
         {#each Object.entries(manager.GetListObjects()) as [key, value]}
@@ -110,12 +110,6 @@
       </select>
         <label for="languageInput"><i class="fa-solid fa-comments"></i> Choose Language</label>
       </div>
-      <h4 style="margin-top: 30px;">Persistence</h4>
-      <hr/>
-      <div class="button-container">
-        <button class="form-control" onclick={e=>manager.Load()}><i class="fa-solid fa-upload"></i> Import</button>
-        <button class="form-control" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk"></i> Export</button>
-      </div>
       {/if}
     </div>
     <div class="section output-section grid-right {viewManager.displayRightView?"":"hidden"}" bind:this={outputContainer}></div>
@@ -128,10 +122,15 @@
           File
         </button>
         <ul class="dropdown-menu" style="width: 300px">
-          <li><button class="dropdown-item" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk"></i> Export all</button></li>
-          <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-upload"></i> Import all</button></li>
+
+          <li><button class="dropdown-item" onclick={e=>manager.Load()}><i class="fa-solid fa-upload text-primary"></i> Import</button></li>
+          <li><button class="dropdown-item" onclick={e=>manager.Save()}><i class="fa-solid fa-floppy-disk text-success"></i> Export</button></li>
           <div class="dropdown-divider"></div>
-          <li><button class="dropdown-item" onclick={e=>manager.ConfirmClean()}><i class="fa-solid fa-download"></i> Clear</button></li>
+          <li><button class="dropdown-item" onclick={e=>manager.Export()}><i class="fa-solid fa-floppy-disk text-success"></i> Export all</button></li>
+          <li><button class="dropdown-item" onclick={e=>manager.Import()}><i class="fa-solid fa-triangle-exclamation text-warning"></i> Import all</button></li>
+          <div class="dropdown-divider"></div>
+          <li><button class="dropdown-item" onclick={e=>manager.ConfirmClean()}><i class="fa-solid fa-triangle-exclamation text-warning"></i> Clear</button></li>
+        
         </ul>
       </div>
       <div style="margin-right: 10px;"></div>

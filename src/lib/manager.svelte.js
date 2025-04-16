@@ -74,7 +74,7 @@ class Manager{
             this.outputEditor.innerHTML = Parser.Parse(value, this.selectedItem.language);
             if(this.selectedItem != null){
                 this.selectedItem.code = value
-                this.LocalStorageSaveSelected()
+                this.LocalStorageSave(this.selectedItem)
             }
         });
     }
@@ -105,14 +105,20 @@ class Manager{
 
     Load(){
         Json.load()
-        .then(item=>{
-            const old = this.items.find(x=>x.id == item.id)
-            if(old){
-                old.Assing(item)
+        .then(item => {
+            if(typeof item !== 'object' || item === null || Array.isArray(item)){
+                alert("File is of invalid format");
+                return
             }
-            else{
-                this.items.push(item)
+            let result = this.items.find(x=>x.id == item.id)
+            if(result){
+                result.Assing(item)
             }
+            else {
+                result = new Item(item)
+                this.items.push(result)
+            }
+            this.LocalStorageSave(result)
             this.Select(item.id)
         })
     }
@@ -133,6 +139,12 @@ class Manager{
     Import(){
         Json.load()
         .then(items=>{
+
+            if(items == null|| !Array.isArray(items)){
+                alert("File is of invalid format");
+                return
+            }
+
             this.Clear()
             this.items = items.map(x => new Item(x))
 
