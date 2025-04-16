@@ -70,7 +70,6 @@ class Parser {
         const data = {}
 
         const globalVariables = {}
-        const globalVariablesOutput = {}
 
         while ((match = exp.exec(input))) {
             if(match[1] == "define"){
@@ -85,15 +84,11 @@ class Parser {
                 const out = []
                 for(const [key, value] of Object.entries(parsed)) {
                     const id = "@"+ UUID.Create()
-                    globalVariables[id] = {
-                        key,
-                        value
-                    }
                     obj[key] = id
                     out.push({key, id, defaultValue: value})
                 }
                 if(Object.keys(out).length > 0){
-                    globalVariablesOutput[match[2].trim()] = out
+                    globalVariables[match[2].trim()] = out
                 }
                 data[match[2].trim().toLocaleLowerCase()] = {obj: obj, refs: getRefs(props), done: false}
             }
@@ -165,7 +160,7 @@ class Parser {
             }
         }
 
-        return [outputs, globalVariablesOutput]
+        return [outputs, globalVariables]
     }
 }
 
