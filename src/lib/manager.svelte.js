@@ -116,7 +116,10 @@ class Manager{
 
     Select(id){
         this.selectedItem = this.items.find(x=>x.id == id)
-        this.inputEditor.value = this.selectedItem.code
+        if(this.selectedItem){
+            this.inputEditor.value = this.selectedItem.code
+            localStorage.setItem("tcp-selected", id)
+        }
     }
 
     Export(){
@@ -138,8 +141,14 @@ class Manager{
     }
 
     SelectAny(){
-        if(this.items.length > 0){
-            this.Select(this.items[0].id)
+        const item = localStorage.getItem("tcp-selected")
+        if(item){
+            this.Select(item)
+        }
+        if(this.selectedItem == null) {
+            if(this.items.length > 0){
+                this.Select(this.items[0].id)
+            }
         }
     }
 
