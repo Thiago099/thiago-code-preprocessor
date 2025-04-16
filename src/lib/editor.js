@@ -91,7 +91,7 @@ class Editor {
         const matches = [];
         
         // Find all occurrences of @myVar
-        const regex = /@data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|(@define)(\s*\w+)|(@output)(\s*[^\n]+)|@([a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}/gs;
+        const regex = /#data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|(#define)(\s*\w+)|(#output)(\s*[^\n]+)|@([a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}/gs;
         let match;
         
         while ((match = regex.exec(text)) !== null) {

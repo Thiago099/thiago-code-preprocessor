@@ -60,7 +60,7 @@ class Parser {
     static Parse(input) {
         const context = {};
 
-        const exp = /@(define|output|data)\s+([\w ]+)(.*?)(?=@define|@output|@data|$)/gs;
+        const exp = /#(define|output|data)\s+([^\n]+)(.*?)(?=#define|#output|#data|$)/gs;
 
         let match;
 
