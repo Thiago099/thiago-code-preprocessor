@@ -1,12 +1,10 @@
 <script>
 
-   import Logo from "/icon-192.png"
+  import Logo from "/icon-192.png"
   import { onMount } from "svelte";
-  import { Editor } from "./lib/editor";
-  import {Manager} from "./lib/manager.svelte"
-  import { makeGridAreasResizable } from "./lib/grid-resize-helper";
 
-  import { ViewManager } from "./lib/view-manager.svelte";
+  import { makeGridAreasResizable, Editor } from "./lib/_lib";
+  import { Manager, ViewManager } from "./manager/_manager"
 
   let editorContainer,
     outputContainer,
@@ -112,7 +110,28 @@
       </div>
       {/if}
     </div>
-    <div class="section output-section grid-right {viewManager.displayRightView?"":"hidden"}" bind:this={outputContainer}></div>
+    <div class="section output-section grid-right {viewManager.displayRightView?"":"hidden"}">
+      {#if manager.selectedItem}
+      {#if manager.selectedItem.output}
+          {#each Object.entries(manager.selectedItem.output) as [key, value]}
+            <h3 class="margin-top-20">{key}</h3>
+            <pre>{@html manager.GetSelectedCode(value)}</pre>
+          {/each}
+        {/if}
+        {#if manager.selectedItem.outputData}
+          {#each Object.entries(manager.selectedItem.outputData.data) as [key, value]}
+            <h3 class="margin-top-20">{key}</h3>
+            {#each value as item}
+              <div class="form-floating margin-top-10">
+                <input type="text" bind:value={item.value} class="form-control" id={item.id}>
+                <label for={item.id}><i class="fa-solid fa-magnifying-glass"></i> {item.key}</label>
+              </div>
+            {/each}
+        
+          {/each}
+        {/if}
+      {/if}
+    </div>
     <div class="section grid-header flex-center logo-container">
       <div style="position: absolute;left:30px;">
         <img class="logo" src={Logo} alt="★"/>Thiago's Code Preprocessor
@@ -172,6 +191,12 @@
 </main>
 
 <style>
+.margin-top-10{
+  margin-top: 10px;
+}
+.margin-top-20{
+  margin-top: 20px;
+}
 .center{
   display: flex;
   justify-content: center;

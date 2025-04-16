@@ -1,6 +1,4 @@
-import hljs from "highlight.js";
-import { UUID } from "./uuid";
-
+import { GlobalData, ReplaceData } from "../entity/_entity";
 
 function splitInput(input){
     input = input.trim()
@@ -69,27 +67,36 @@ class Parser {
         const output = {}
         const data = {}
 
-        const globalVariables = {}
+        const globalVariables = new GlobalData()
 
-        while ((match = exp.exec(input))) {
-            if(match[1] == "define"){
+        while ((match = exp.exec(input))) 
+        {
+            if (match[1] == "define")
+            {
                 context[match[2].trim().toLocaleLowerCase()] = match[3].trim();
-            } else if(match[1] == "output"){
+            } 
+            else if (match[1] == "output")
+            {
                 output[match[2].trim()] = match[3].trim();
-            } else if(match[1] == "data"){
+            } 
+            else if (match[1] == "data")
+            {
                 let props = match[3].trim()
                 props = props.substring(1, props.length - 1)
                 const parsed = parseStringToObject(props)
                 const obj = {}
                 const out = []
-                for(const [key, value] of Object.entries(parsed)) {
-                    const id = "@"+ UUID.Create()
-                    obj[key] = id
-                    out.push({key, id, defaultValue: value})
+                
+                for (const [key, value] of Object.entries(parsed)) {
+                    const current = new ReplaceData(key, value)
+                    obj[key] = current.id
+                    out.push(current)
                 }
-                if(Object.keys(out).length > 0){
-                    globalVariables[match[2].trim()] = out
+
+                if (Object.keys(out).length > 0){
+                    globalVariables.Add(match[2].trim(), out)
                 }
+
                 data[match[2].trim().toLocaleLowerCase()] = {obj: obj, refs: getRefs(props), done: false}
             }
         }
@@ -154,10 +161,7 @@ class Parser {
         
         for(const [key, value] of Object.entries(output)){
             const code = loop(value, {})
-            outputs[key] = {
-                html: hljs.highlight(code,{language:language}).value, // TODO: Decouple highlight and parsing
-                raw: code
-            }
+            outputs[key] = code
         }
 
         return [outputs, globalVariables]

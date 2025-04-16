@@ -1,4 +1,4 @@
-class ViewManager{
+class ViewManager {
     displayLeftPanel = $state(this.Load("displayLeftPanel"))
     displayRightPanel = $state(this.Load("displayRightPanel"))
     displayLeftView = $state(this.Load("displayLeftView"))

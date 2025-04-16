@@ -1,43 +1,7 @@
-import { Editor } from "./editor";
-import { Parser } from "./parser";
-import { Json } from "./json";
-import { UUID } from "./uuid";
+import { Editor, Parser, Json } from "../lib/_lib";
+import { Item } from "../entity/_entity";
+import hljs from "highlight.js";
 
-class Item {
-    id = UUID.Create()
-    name = $state("")
-    language = $state("javascript")
-    code = $state("")
-    category = $state("")
-    static matchKeyRegex = /tcp-item-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
-    get key() {
-        return "tcp-item-" + this.id
-    }
-    constructor(source = null) {
-        if(source != null){
-            this.Assing(source)
-        }
-    }
-    static IsValidKey(text){
-        return Item.matchKeyRegex.test(text)
-    }
-    Assing(source){
-        this.id = source.id
-        this.name = source.name
-        this.language = source.language
-        this.code = atob(source.code)
-        this.category = source.category
-    }
-    ToRaw(){
-        return {
-            id:this.id,
-            name: this.name,
-            language: this.language,
-            code: btoa(this.code),
-            category: this.category
-        }
-    }
-}
 class Manager{
     items = $state([])
     filter = $state("")
@@ -218,10 +182,8 @@ class Manager{
     }
     UpdateOutput(code, language){
         const [outputs, globalVariables] = Parser.Parse(code, language);
-        this.outputEditor.innerHTML = `<pre class="code-block">${JSON.stringify(globalVariables, null, 4)}</pre>`
-        for(const [key, value] of Object.entries(outputs)){
-            this.outputEditor.innerHTML += `<pre class="code-block">${value.raw}</pre>`
-        }
+        this.selectedItem.outputData = globalVariables
+        this.selectedItem.output = outputs
     }
     get IsAnyItemSelected(){
         return this.selectedItem != null
@@ -246,6 +208,11 @@ class Manager{
         if(confirm(`Are you sure you want to clean all of the texts`)){
             this.Clear()
         } 
+    }
+
+    GetSelectedCode(value){
+        const result = this.selectedItem.outputData.ReplaceAll(value)
+        return hljs.highlight(result,{language:this.selectedItem.language}).value
     }
 
     SortItems(){
