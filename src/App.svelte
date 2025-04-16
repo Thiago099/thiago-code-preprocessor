@@ -39,17 +39,18 @@
       <h4 style="margin-top: 30px;">Properties</h4>
       <hr/>
       <div class="form-floating">
-        <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.name} oninput={x=>manager.LocalStorageSaveSelected()}>
+        <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.name} oninput={x=>manager.NameChanged(x)}>
         <label for="floatingInput"><i class="fa-solid fa-file"></i> Enter Name</label>
       </div>
       <div class="form-floating">
-        <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.category} oninput={x=>manager.LocalStorageSaveSelected()}>
+        <input type="text" class="form-control" id="floatingInput" bind:value={manager.selectedItem.category} oninput={x=>manager.CategoryChanged(x)}>
         <label for="floatingInput"><i class="fa-solid fa-layer-group"></i> Enter Category</label>
       </div>
       <div class="form-floating">
           <select
           class="form-select"
           id="chooseCategory"
+          oninput={x=>manager.CategoryChanged(x)}
           bind:value={manager.selectedItem.category}
         >
           <option value="">No Category</option>
@@ -63,7 +64,7 @@
         <select
         class="form-select"
         id="languageInput"
-        oninput={x=>manager.LocalStorageSaveSelected()}
+        oninput={x=>manager.LanguageChanged(x)}
         bind:value={manager.selectedItem.language}
       >
         {#each Editor.languages as language}

@@ -167,10 +167,23 @@ class Manager{
         return item.name.toLowerCase().includes(this.filter.toLowerCase()) && 
         ((this.categoryFilter == "----all" || item.category == this.categoryFilter)|| (this.categoryFilter == "----none"&& item.category == "") )
     }
-
-    LocalStorageSaveSelected(){
+    NameChanged(e){
+        const value = e.target.value
+        this.selectedItem.name = value
         this.LocalStorageSave(this.selectedItem)
     }
+    CategoryChanged(e){
+        const value = e.target.value
+        this.selectedItem.category = value
+        this.LocalStorageSave(this.selectedItem)
+    }
+    LanguageChanged(e){
+        const value = e.target.value
+        this.inputEditor.language = value
+        this.selectedItem.language = value 
+        this.LocalStorageSave(this.selectedItem)
+    }
+
     LocalStorageSave(item){
         localStorage.setItem(item.key, JSON.stringify(item.ToRaw()))
     }
