@@ -91,7 +91,7 @@ class Editor {
         const matches = [];
         
         // Find all occurrences of @myVar
-        const regex = /#data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|(#define)(\s*\w+)|(#output)(\s*[^\n]+)|@([a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}/gs;
+        const regex = /#data(\s*[a-zA-Z0-9_]+\s*)(\(.*?\)){0,1}|(#define)(\s*\w+)|(#output)(\s*[^\n]+)|@([a-zA-Z0-9_]+\s*)(\(.*?\))|\$([a-zA-Z0-9_]+)/gs;
         let match;
         
         while ((match = regex.exec(text)) !== null) {
@@ -118,6 +118,11 @@ class Editor {
                 start = match.index + match[7].length+1 
                  highlight(model, matches, match.index, start, match[8]?"function-highlight":"property-highlight")
             }
+            else if(match[9]){
+                start = match.index + match[9].length+1 
+                highlight(model, matches, match.index, start, match[8]?"function-highlight":"property-highlight")
+            }
+            
             if(match[2] || match[8]){
                 const name = match[1] ? "data" : match[7]?.trim()?.toLocaleLowerCase();
 

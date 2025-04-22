@@ -60,7 +60,7 @@ class Parser {
     static Parse(input) {
         const context = {};
 
-        const exp = /#(define|output|data)\s+([^\n]+)(.*?)(?=#define|#output|#data|$)/gs;
+        const exp = /#(define|output|data)\s+([^\n\()]+)(.*?)(?=#define|#output|#data|$)/gs;
 
         let match;
 
@@ -121,36 +121,37 @@ class Parser {
             }
         }
 
-        const regex = /@([a-zA-Z0-9_]+)(\(.*?\)){0,1}/gs;
+        const regex = /@([a-zA-Z0-9_]+)(\(.*?\))|\$([a-zA-Z0-9_]+)/gs;
 
         function loop(main, obj) {
             if(!main) return ""
-            return main.replace(regex, (match, varName, props) => {
+            return main.replace(regex, (match, functionName, props, varName) => {
+                let result = match
+                if (functionName && props) {
+                    functionName = functionName.trim().toLocaleLowerCase()
+                    if(functionName in context) {
+                        
+                        props = props.trim();
+                        props = props.substring(1, props.length - 1)
 
-                varName = varName.trim().toLocaleLowerCase()
+                        let localData = parseStringToObject(props)
+                        const localRefs = getRefs(props)
 
-                let result = ""
-
-                if (props) {
-                    props = props.trim();
-                    props = props.substring(1, props.length - 1)
-
-                    let localData = parseStringToObject(props)
-                    const localRefs = getRefs(props)
-
-                    for(const item of localRefs){
-                        if(item in data){
-                            localData = {...data[item].obj, ...localData}
+                        for(const item of localRefs){
+                            if(item in data){
+                                localData = {...data[item].obj, ...localData}
+                            }
                         }
-                    }
 
-                    if(varName in context){
                         const parameters = { ...obj, ...localData }
-                        result = loop(context[varName], parameters)
+                        result = loop(context[functionName], parameters)
                     }
                 }
-                else {
-                    result = obj[varName] || match;
+                else if(varName) {
+                    varName = varName.trim().toLocaleLowerCase()
+                    if(varName in obj) {
+                        result = obj[varName];
+                    }
                 }
 
                 return result;
