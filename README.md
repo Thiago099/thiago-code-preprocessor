@@ -21,13 +21,13 @@ All the commands are hoisted (which means the order you define them does not mat
 ## Output
 With that instruction the code until the next instruction will be a output snippet
 ```
-@output Output Name
+#output Output Name
 ```
 
 ## Define
 Creates a global function in the code
 ```
-@define myFunction
+#define myFunction
 ```
 
 You can call your function anywhere by using
@@ -38,7 +38,7 @@ You can call your function anywhere by using
 # Data
 You can use data to declare an object that can be used by other functions
 ```
-@data myData(
+#data myData(
     parameter3: value3,
     parameter4: value4
 )
