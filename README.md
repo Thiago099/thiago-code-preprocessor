@@ -28,6 +28,7 @@ With that instruction the code until the next instruction will be a output snipp
 Creates a global function in the code
 ```
 #define myFunction
+$variable
 ```
 
 You can call your function anywhere by using
